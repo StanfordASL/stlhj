@@ -11,6 +11,7 @@
 #include <fstream>
 #include <iomanip>
 #include <cstring>
+#include "until.cpp"
 
 /**
 	@brief Tests the Plane class by computing a reachable set and then computing 
@@ -82,8 +83,8 @@ int main(int argc, char *argv[])
 		beacls::IntegerVec{41,41,11});
 
 	//!< Compute reachable set
-	const FLOAT_TYPE tMax = 500;
-	const FLOAT_TYPE dt = 0.25;
+	const FLOAT_TYPE tMax = 5;
+	const FLOAT_TYPE dt = 0.1;
 	beacls::FloatVec tau = generateArithmeticSequence<FLOAT_TYPE>(0., dt, tMax);
 
 	// Dynamical system parameters
@@ -93,9 +94,28 @@ int main(int argc, char *argv[])
 	schemeData->uMode = helperOC::DynSys_UMode_Min;
 	schemeData->dMode = helperOC::DynSys_DMode_Max;
 
+  beacls::FloatVec alpha, beta;
+
+  const size_t numel = g->get_numel();
+  const size_t num_dim = g->get_num_of_dimensions();
+  
+  alpha.assign(numel, 0);
+  beta.assign(numel, 0);
+
+  for (size_t dim = 0; dim < num_dim; ++dim) {
+  	const beacls::FloatVec &xs = g->get_xs(dim);
+  	std::transform(xs.cbegin(), xs.cend(), alpha.begin(), alpha.begin(), 
+  	               [](const auto &xs_i, const auto &alpha_i) {
+                     return alpha_i + std::pow(xs_i, 2); });
+
+  	std::transform(xs.cbegin(), xs.cend(), beta.begin(), beta.begin(), 
+                   [](const auto &xs_i, const auto &beta_i) {
+  	                 return beta_i + std::pow(xs_i - 2., 2); });
+  }
+ 
 	// Target set and visualization
 	helperOC::HJIPDE_extraArgs extraArgs;
-	helperOC::HJIPDE_extraOuts extraOuts;
+
 	extraArgs.visualize = true;
 	extraArgs.plotData.plotDims = beacls::IntegerVec{ 1, 1, 0 };
 	extraArgs.plotData.projpt = beacls::FloatVec{ pl->get_x()[2] };
@@ -109,12 +129,17 @@ int main(int argc, char *argv[])
 	extraArgs.execParameters.num_of_gpus = num_of_gpus;
 	extraArgs.execParameters.num_of_threads = num_of_threads;
 	extraArgs.execParameters.delayedDerivMinMax = delayedDerivMinMax;
-	extraArgs.execParameters.enable_user_defined_dynamics_on_gpu = enable_user_defined_dynamics_on_gpu;
+	extraArgs.execParameters.enable_user_defined_dynamics_on_gpu = 
+	  enable_user_defined_dynamics_on_gpu;
 
-  until(beacls::FloatVec alpha, beacls::FloatVec beta, FLOAT_TYPE tau1, 
-  	FLOAT_TYPE tau2, helperOC::DynSysSchemeData* schemeData, beacls::FloatVec tau);
+  FLOAT_TYPE tau1 = 2.;
+  FLOAT_TYPE tau2 = 4.;
+
+  std::vector<beacls::FloatVec> aub;
+  until(aub, alpha, beta, tau1, tau2, schemeData, tau, extraArgs);
   
-	if (hjipde) delete hjipde;
+	printf("Done\n");
+
 	if (schemeData) delete schemeData;
 	if (pl) delete pl;
 	if (g) delete g;
