@@ -18,10 +18,10 @@ const size_t numel = schemeData->get_grid()->get_numel();
      std::copy(beta.begin(), beta.end(), targets[i].begin());
     }
 
-    // obstacles[i].assign(numel, 1.);
-    // if (true) {//(tau[i] > tau2) { // satisfy alpha if tau < tau1
-    //   std::copy(alpha.cbegin(), alpha.cend(), obstacles[i].begin());
-    // }
+    obstacles[i].assign(numel, 1.);
+    if (true) {//(tau[i] > tau2) { // satisfy alpha if tau < tau1
+      std::copy(alpha.cbegin(), alpha.cend(), obstacles[i].begin());
+    }
   }
 
   helperOC::HJIPDE_extraOuts extraOuts;

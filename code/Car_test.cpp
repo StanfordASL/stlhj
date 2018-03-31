@@ -134,11 +134,11 @@ int main(int argc, char *argv[])
 		for (size_t dim = 0; dim < num_dim; ++dim) {
 			const beacls::FloatVec &xs = g->get_xs(dim);
 
-			// if (dim == 0) {
-			// 	std::transform(xs.cbegin(), xs.cend(), alpha.begin(), 
-			// 		[alpha_offset](const auto &xs_i) {
-			// 			return xs_i - alpha_offset; });  		
-			// }
+			if (dim == 0) {
+				std::transform(xs.cbegin(), xs.cend(), alpha.begin(), 
+					[alpha_offset](const auto &xs_i) {
+						return xs_i - alpha_offset; });  		
+			}
 
 			if (dim == 0 || dim == 1) {
 				std::transform(xs.cbegin(), xs.cend(), beta.begin(), beta.begin(), 
