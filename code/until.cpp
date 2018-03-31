@@ -27,7 +27,7 @@ const size_t numel = schemeData->get_grid()->get_numel();
   helperOC::HJIPDE_extraOuts extraOuts;
 
   extraArgs.targets = targets;
-  extraArgs.obstacles = obstacles;
+  //extraArgs.obstacles = obstacles;
 
   helperOC::HJIPDE* hjipde;
   hjipde = new helperOC::HJIPDE();

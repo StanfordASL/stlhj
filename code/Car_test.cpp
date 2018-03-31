@@ -80,10 +80,10 @@ int main(int argc, char *argv[])
 	const beacls::FloatVec dMax{ (FLOAT_TYPE)0, (FLOAT_TYPE)0 };
 
 	const FLOAT_TYPE inf = std::numeric_limits<FLOAT_TYPE>::infinity();
-	const beacls::IntegerVec pdDim{3};
-
+  const beacls::IntegerVec pdDim{2};
+  
 // Grid Target and obstacle
-	bool accel = true;
+	bool accel = false;
   const beacls::FloatVec initState{(FLOAT_TYPE)0, (FLOAT_TYPE)25, 
 			(FLOAT_TYPE)(270 * M_PI / 180), (FLOAT_TYPE)15};
 
@@ -124,21 +124,21 @@ int main(int argc, char *argv[])
 		FLOAT_TYPE tau2 = 5.;  
 
 // Define alpha and beta
-		FLOAT_TYPE alpha_offset = -20.;
+		FLOAT_TYPE alpha_offset = -75.;
 		FLOAT_TYPE beta_radius = 20.;
 		FLOAT_TYPE beta_offset = 0.;
 
-		alpha.assign(numel, 0);
-		beta.assign(numel, 0);
+		alpha.assign(numel, 100.);
+		beta.assign(numel, 0.);
 
 		for (size_t dim = 0; dim < num_dim; ++dim) {
 			const beacls::FloatVec &xs = g->get_xs(dim);
 
-			if (dim == 0) {
-				std::transform(xs.cbegin(), xs.cend(), alpha.begin(), 
-					[alpha_offset](const auto &xs_i) {
-						return xs_i - alpha_offset; });  		
-			}
+			// if (dim == 0) {
+			// 	std::transform(xs.cbegin(), xs.cend(), alpha.begin(), 
+			// 		[alpha_offset](const auto &xs_i) {
+			// 			return xs_i - alpha_offset; });  		
+			// }
 
 			if (dim == 0 || dim == 1) {
 				std::transform(xs.cbegin(), xs.cend(), beta.begin(), beta.begin(), 
@@ -191,6 +191,25 @@ int main(int argc, char *argv[])
 		std::vector<beacls::FloatVec> alpha_U_beta;
 		int result = until(alpha_U_beta, alpha, beta, tau1, tau2, schemeData, tau, 
 			extraArgs);
+
+	  // save mat file
+		std::string Car_test_filename("Car_test.mat");
+		beacls::MatFStream* fs = beacls::openMatFStream(Car_test_filename, 
+			beacls::MatOpenMode_Write);
+
+		if (dump_file) {
+			beacls::IntegerVec Ns = g->get_Ns();
+
+			g->save_grid(std::string("g"), fs);
+			if (!alpha_U_beta.empty()) {
+				save_vector_of_vectors(alpha_U_beta, std::string("data"), Ns, false, fs);
+			}
+			if (!tau.empty()) {
+				save_vector(tau, std::string("tau"), Ns, false, fs);
+			}
+		}
+
+	beacls::closeMatFStream(fs);
 
 		if (schemeData) delete schemeData;
 		if (p3D) delete p3D;
