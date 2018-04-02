@@ -124,7 +124,7 @@ int main(int argc, char *argv[])
 		FLOAT_TYPE tau2 = 5.;  
 
 // Define alpha and beta
-		FLOAT_TYPE alpha_offset = -20.;
+		FLOAT_TYPE alpha_offset = 20.;
 		FLOAT_TYPE beta_radius = 20.;
 		FLOAT_TYPE beta_offset = 0.;
 
@@ -134,22 +134,24 @@ int main(int argc, char *argv[])
 		for (size_t dim = 0; dim < num_dim; ++dim) {
 			const beacls::FloatVec &xs = g->get_xs(dim);
 
-			if (dim == 0) {
+			if (dim == 0) { // alpha = x0 - alpha offset
 				std::transform(xs.cbegin(), xs.cend(), alpha.begin(), 
 					  [alpha_offset](const auto &xs_i) {
 						return xs_i - alpha_offset; });  		
 			}
 
-			if (dim == 0 || dim == 1) {
+			if (dim == 0 || dim == 1) { 
+			  // beta = (x0-beta_offset)^2 + (x1-beta_offset)^2
 				std::transform(xs.cbegin(), xs.cend(), beta.begin(), beta.begin(), 
 					  [beta_offset](const auto &xs_i, const auto &beta_i) {
-						return beta_i + std::pow((xs_i - beta_offset), 2); });    	
+						return beta_i - std::pow((xs_i - beta_offset), 2); });    	
 			}
 		}
-
+    
+    // beta = beta - beta_radius^2
 		std::transform(beta.cbegin(), beta.cend(), beta.begin(),
 			  [beta_radius](const auto &beta_i) {
-				return beta_i - std::pow(beta_radius, 2); });
+				return beta_i + std::pow(beta_radius, 2); });
 
   // Dynamical system parameters
 		helperOC::DynSysSchemeData* schemeData = new helperOC::DynSysSchemeData;
