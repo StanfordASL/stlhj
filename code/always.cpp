@@ -1,8 +1,13 @@
-int until(std::vector<beacls::FloatVec> datas, beacls::FloatVec alpha, 
-  beacls::FloatVec beta, FLOAT_TYPE tau1, FLOAT_TYPE tau2, 
-  helperOC::DynSysSchemeData* schemeData, beacls::FloatVec tau, 
-  helperOC::HJIPDE_extraArgs extraArgs){
+int always(
+    std::vector<beacls::FloatVec> datas,
+    beacls::FloatVec alpha,
+    FLOAT_TYPE tau1,
+    FLOAT_TYPE tau2,
+    helperOC::DynSysSchemeData* schemeData, 
+    beacls::FloatVec tau,
+    helperOC::HJIPDE_extraArgs extraArgs){
 
+// NOT DONE! MINIMALLY MODIFIED FROM until.cpp
 const FLOAT_TYPE small = 1e-3;
 const size_t numel = schemeData->get_grid()->get_numel();
 
