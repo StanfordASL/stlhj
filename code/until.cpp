@@ -8,7 +8,7 @@ int until(std::vector<beacls::FloatVec>& datas, beacls::FloatVec alpha,
 
   std::vector<beacls::FloatVec> targets(tau.size());
   for (size_t i = 0; i < tau.size(); ++i) {
-    targets[i].assign(numel, 1.);
+    targets[i].assign(numel, 100.);
     if (tau[i] > tau1 - small && tau[i] < tau2 + small) { 
       // satisfy beta if tau1 < tau < tau2, but also negate
       std::transform(beta.cbegin(), beta.cend(), targets[i].begin(),
@@ -17,9 +17,12 @@ int until(std::vector<beacls::FloatVec>& datas, beacls::FloatVec alpha,
   }
 
   std::vector<beacls::FloatVec> obstacles(1);
-  obstacles[0].assign(numel, 1.);
-  std::transform(alpha.cbegin(), alpha.cend(), obstacles[0].begin(),
-      std::negate<FLOAT_TYPE>()); 
+  obstacles[0].assign(numel, 0.);
+  std::copy(alpha.cbegin(), alpha.cend(), obstacles[0].begin()); 
+
+
+  schemeData->uMode = helperOC::DynSys_UMode_Min;
+  schemeData->dMode = helperOC::DynSys_DMode_Max;
 
   helperOC::HJIPDE_extraOuts extraOuts;
 

@@ -13,21 +13,19 @@ const size_t numel = schemeData->get_grid()->get_numel();
 
   std::vector<beacls::FloatVec> targets(tau.size());
   for (size_t i = 0; i < tau.size(); ++i) {
-    targets[i].assign(numel, 1.);
+    targets[i].assign(numel, 100.);
     if (tau[i] > tau1 - small && tau[i] < tau2 + small) { 
       // satisfy beta if tau1 < tau < tau2
-     std::copy(beta.begin(), beta.end(), targets[i].begin());
+     std::copy(alpha.begin(), alpha.end(), targets[i].begin());
     }
   }
-
-  std::vector<beacls::FloatVec> obstacles(1);
-  obstacles[0].assign(numel, 1.);
-  std::copy(alpha.cbegin(), alpha.cend(), obstacles[0].begin());
+  
+  schemeData->uMode = helperOC::DynSys_UMode_Max;
+  schemeData->dMode = helperOC::DynSys_DMode_Min;
 
   helperOC::HJIPDE_extraOuts extraOuts;
 
   extraArgs.targets = targets;
-  extraArgs.obstacles = obstacles;
 
   helperOC::HJIPDE* hjipde;
   hjipde = new helperOC::HJIPDE();

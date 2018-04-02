@@ -13,6 +13,8 @@
 #include <iomanip>
 #include <cstring>
 #include "until.cpp"
+#include "eventually.cpp"
+#include "always.cpp"
 
 /**
 @brief Tests the Plane class by computing a reachable set and then computing the optimal trajectory from the reachable set.
@@ -70,7 +72,7 @@ int main(int argc, char *argv[])
 
 //!< Compute reachable set
 	const FLOAT_TYPE tMax = 5;
-	const FLOAT_TYPE dt = 0.05;
+	const FLOAT_TYPE dt = 0.25;
 	beacls::FloatVec tau = generateArithmeticSequence<FLOAT_TYPE>(0., dt, tMax);
 
 //!< Plane parameters
@@ -106,7 +108,7 @@ int main(int argc, char *argv[])
 	else {
 		g = helperOC::createGrid(
 			beacls::FloatVec{gmin[0], gmin[1], gmin[2]}, 
-			beacls::FloatVec{gmax[0], gmax[1], gmax[2]}, beacls::IntegerVec{35,35,35},
+			beacls::FloatVec{gmax[0], gmax[1], gmax[2]}, beacls::IntegerVec{35,35,25},
 			pdDim);
 		}
 
@@ -121,10 +123,10 @@ int main(int argc, char *argv[])
 */
 // Define tau1 and tau2
 		FLOAT_TYPE tau1 = 0.;
-		FLOAT_TYPE tau2 = 5.;  
+		FLOAT_TYPE tau2 = 2.;  
 
 // Define alpha and beta
-		FLOAT_TYPE alpha_offset = 20.;
+		FLOAT_TYPE alpha_offset = -30.;
 		FLOAT_TYPE beta_radius = 20.;
 		FLOAT_TYPE beta_offset = 0.;
 
@@ -134,7 +136,7 @@ int main(int argc, char *argv[])
 		for (size_t dim = 0; dim < num_dim; ++dim) {
 			const beacls::FloatVec &xs = g->get_xs(dim);
 
-			if (dim == 0) { // alpha = x0 - alpha offset
+			if (dim == 1) { // alpha = x1 - alpha offset
 				std::transform(xs.cbegin(), xs.cend(), alpha.begin(), 
 					  [alpha_offset](const auto &xs_i) {
 						return xs_i - alpha_offset; });  		
@@ -153,14 +155,11 @@ int main(int argc, char *argv[])
 			  [beta_radius](const auto &beta_i) {
 				return beta_i + std::pow(beta_radius, 2); });
 
-  // Dynamical system parameters
+    // Dynamical system parameters
 		helperOC::DynSysSchemeData* schemeData = new helperOC::DynSysSchemeData;
 		helperOC::HJIPDE_extraArgs extraArgs;
   
-		schemeData->uMode = helperOC::DynSys_UMode_Min;
-		schemeData->dMode = helperOC::DynSys_DMode_Max;
-
-// Target set and visualization
+    // Target set and visualization
 		extraArgs.visualize = true;
 
 		schemeData->set_grid(g);
@@ -190,32 +189,40 @@ int main(int argc, char *argv[])
 		enable_user_defined_dynamics_on_gpu;
 
 		std::vector<beacls::FloatVec> alpha_U_beta;
-		int result = until(alpha_U_beta, alpha, beta, tau1, tau2, schemeData, tau, 
+		int resultU = until(alpha_U_beta, alpha, beta, tau1, tau2, schemeData, tau, 
 			extraArgs);
 
-	  // save mat file
-		std::string Car_test_filename("Car_test.mat");
-		beacls::MatFStream* fs = beacls::openMatFStream(Car_test_filename, 
-			beacls::MatOpenMode_Write);
+    std::vector<beacls::FloatVec> event_beta;
+		int resultF = eventually(event_beta, beta, tau1, tau2, schemeData, tau, 
+			extraArgs);
 
-		if (dump_file) {
-			beacls::IntegerVec Ns = g->get_Ns();
+    std::vector<beacls::FloatVec> always_alpha;
+		int resultG = always(always_alpha, alpha, tau1, tau2, schemeData, tau, 
+			extraArgs);				
 
-			g->save_grid(std::string("g"), fs);
-			if (!alpha_U_beta.empty()) {
-				save_vector_of_vectors(alpha_U_beta, std::string("data"), Ns, false, fs);
-			}
-			if (!tau.empty()) {
-				save_vector(tau, std::string("tau"), Ns, false, fs);
-			}
-		}
+	 //  // save mat file
+		// std::string Car_test_filename("Car_test.mat");
+		// beacls::MatFStream* fs = beacls::openMatFStream(Car_test_filename, 
+		// 	beacls::MatOpenMode_Write);
 
-	  beacls::closeMatFStream(fs);
+		// if (dump_file) {
+		// 	beacls::IntegerVec Ns = g->get_Ns();
+
+		// 	g->save_grid(std::string("g"), fs);
+		// 	if (!alpha_U_beta.empty()) {
+		// 		save_vector_of_vectors(alpha_U_beta, std::string("data"), Ns, false, fs);
+		// 	}
+		// 	if (!tau.empty()) {
+		// 		save_vector(tau, std::string("tau"), Ns, false, fs);
+		// 	}
+		// }
+
+	  //beacls::closeMatFStream(fs);
 
 		if (schemeData) delete schemeData;
 		if (p3D) delete p3D;
 		if (p4D) delete p4D;
 		if (g) delete g;
-		return result;
+		return 0;
 	}
 
