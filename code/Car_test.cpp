@@ -15,6 +15,11 @@
 #include "until.cpp"
 #include "eventually.cpp"
 #include "always.cpp"
+#include "alpha_fun.cpp"
+#include "beta_fun.cpp"
+
+#include "Square_alpha_beta.cpp"
+#include "Road_alpha_beta.cpp"
 
 /**
 @brief Tests the Plane class by computing a reachable set and then computing the optimal trajectory from the reachable set.
@@ -31,7 +36,7 @@ int main(int argc, char *argv[])
 	}
 	const bool keepLast = false;
 	const bool calculateTTRduringSolving = false;
-	levelset::DelayedDerivMinMax_Type delayedDerivMinMax = 
+	levelset::DelayedDerivMinMax_Type delayedDerivMinMax =
 	  levelset::DelayedDerivMinMax_Disable;
 	if (argc >= 4) {
 		switch (atoi(argv[3])) {
@@ -86,33 +91,32 @@ int main(int argc, char *argv[])
 
 // Grid Target and obstacle
 	bool accel = false;
-  const beacls::FloatVec initState{(FLOAT_TYPE)0, (FLOAT_TYPE)25, 
+  const beacls::FloatVec initState{(FLOAT_TYPE)0, (FLOAT_TYPE)25,
 			(FLOAT_TYPE)(270 * M_PI / 180), (FLOAT_TYPE)15};
 
-  const beacls::FloatVec 
-    gmin{(FLOAT_TYPE)(-75), (FLOAT_TYPE)(-75), (FLOAT_TYPE)0, (FLOAT_TYPE)5}; 
+  const beacls::FloatVec
+    //gmin{(FLOAT_TYPE)(-8), (FLOAT_TYPE)(-8), (FLOAT_TYPE)0, (FLOAT_TYPE)5};
+		gmin{(FLOAT_TYPE)(-4), (FLOAT_TYPE)(-8), (FLOAT_TYPE)0, (FLOAT_TYPE)5};
 
   const beacls::FloatVec
-    gmax{(FLOAT_TYPE)75, (FLOAT_TYPE)75, (FLOAT_TYPE)(2*M_PI),(FLOAT_TYPE)25}; 
+    gmax{(FLOAT_TYPE)4, (FLOAT_TYPE)8, (FLOAT_TYPE)(2*M_PI),(FLOAT_TYPE)25};
 
   levelset::HJI_Grid* g;
   helperOC::Plane* p3D = new helperOC::Plane(
-  	beacls::FloatVec{initState[0], initState[1], initState[2]}, 
+  	beacls::FloatVec{initState[0], initState[1], initState[2]},
   	wMax, vrange, dMax);
   helperOC::Plane4D* p4D = new helperOC::Plane4D(initState, wMax, arange, dMax);
 
 	if (accel) {
-  	g = helperOC::createGrid(gmin, gmax, 
-				beacls::IntegerVec{31,31,21,21}, pdDim);	
-	} 
+  	g = helperOC::createGrid(gmin, gmax,
+				beacls::IntegerVec{31,31,21,21}, pdDim);
+	}
 	else {
 		g = helperOC::createGrid(
-			beacls::FloatVec{gmin[0], gmin[1], gmin[2]}, 
-			beacls::FloatVec{gmax[0], gmax[1], gmax[2]}, beacls::IntegerVec{35,35,25},
+			beacls::FloatVec{gmin[0], gmin[1], gmin[2]},
+			beacls::FloatVec{gmax[0], gmax[1], gmax[2]}, beacls::IntegerVec{40,80,25},
 			pdDim);
 		}
-
-		beacls::FloatVec alpha, beta;
 
 		const size_t numel = g->get_numel();
 		const size_t num_dim = g->get_num_of_dimensions();
@@ -123,42 +127,18 @@ int main(int argc, char *argv[])
 */
 // Define tau1 and tau2
 		FLOAT_TYPE tau1 = 0.;
-		FLOAT_TYPE tau2 = 2.;  
+		FLOAT_TYPE tau2 = 2.;
 
 // Define alpha and beta
-		FLOAT_TYPE alpha_offset = -30.;
-		FLOAT_TYPE beta_radius = 20.;
-		FLOAT_TYPE beta_offset = 0.;
+	   beacls::FloatVec alpha, beta;
 
-		alpha.assign(numel, 0.);
-		beta.assign(numel, 0.);
 
-		for (size_t dim = 0; dim < num_dim; ++dim) {
-			const beacls::FloatVec &xs = g->get_xs(dim);
-
-			if (dim == 1) { // alpha = x1 - alpha offset
-				std::transform(xs.cbegin(), xs.cend(), alpha.begin(), 
-					  [alpha_offset](const auto &xs_i) {
-						return xs_i - alpha_offset; });  		
-			}
-
-			if (dim == 0 || dim == 1) { 
-			  // beta = (x0-beta_offset)^2 + (x1-beta_offset)^2
-				std::transform(xs.cbegin(), xs.cend(), beta.begin(), beta.begin(), 
-					  [beta_offset](const auto &xs_i, const auto &beta_i) {
-						return beta_i - std::pow((xs_i - beta_offset), 2); });    	
-			}
-		}
-    
-    // beta = beta - beta_radius^2
-		std::transform(beta.cbegin(), beta.cend(), beta.begin(),
-			  [beta_radius](const auto &beta_i) {
-				return beta_i + std::pow(beta_radius, 2); });
+  	   Road_alpha_beta(alpha,beta,g);
 
     // Dynamical system parameters
 		helperOC::DynSysSchemeData* schemeData = new helperOC::DynSysSchemeData;
 		helperOC::HJIPDE_extraArgs extraArgs;
-  
+
     // Target set and visualization
 		extraArgs.visualize = true;
 
@@ -166,13 +146,13 @@ int main(int argc, char *argv[])
 		if (accel) {
 			schemeData->dynSys = p4D;
 			extraArgs.plotData.plotDims = beacls::IntegerVec{ 1, 1, 0, 0};
-			extraArgs.plotData.projpt = 
-			beacls::FloatVec{p4D->get_x()[2], p4D->get_x()[3]};			
-		} 
+			extraArgs.plotData.projpt =
+			beacls::FloatVec{p4D->get_x()[2], p4D->get_x()[3]};
+		}
 		else {
 			schemeData->dynSys = p3D;
 			extraArgs.plotData.plotDims = beacls::IntegerVec{ 1, 1, 0};
-			extraArgs.plotData.projpt = beacls::FloatVec{p3D->get_x()[2]};	
+			extraArgs.plotData.projpt = beacls::FloatVec{p3D->get_x()[2]};
 		}
 
 		extraArgs.deleteLastPlot = true;
@@ -185,39 +165,39 @@ int main(int argc, char *argv[])
 		extraArgs.execParameters.num_of_gpus = num_of_gpus;
 		extraArgs.execParameters.num_of_threads = num_of_threads;
 		extraArgs.execParameters.delayedDerivMinMax = delayedDerivMinMax;
-		extraArgs.execParameters.enable_user_defined_dynamics_on_gpu = 
+		extraArgs.execParameters.enable_user_defined_dynamics_on_gpu =
 		enable_user_defined_dynamics_on_gpu;
 
-		std::vector<beacls::FloatVec> alpha_U_beta;
-		int resultU = until(alpha_U_beta, alpha, beta, tau1, tau2, schemeData, tau, 
-			extraArgs);
+		// std::vector<beacls::FloatVec> alpha_U_beta;
+		// int resultU = until(alpha_U_beta, alpha, beta, tau1, tau2, schemeData, tau,
+		// 	extraArgs);
+		//
+    // std::vector<beacls::FloatVec> event_beta;
+		// int resultF = eventually(event_beta, beta, tau1, tau2, schemeData, tau,
+		// 	extraArgs);
+		//
+    // std::vector<beacls::FloatVec> always_alpha;
+		// int resultG = always(always_alpha, alpha, tau1, tau2, schemeData, tau,
+		// 	extraArgs);
 
-    std::vector<beacls::FloatVec> event_beta;
-		int resultF = eventually(event_beta, beta, tau1, tau2, schemeData, tau, 
-			extraArgs);
+	  // save mat file
+		 std::string Car_test_filename("Car_test.mat");
+		 beacls::MatFStream* fs = beacls::openMatFStream(Car_test_filename,
+		 	beacls::MatOpenMode_Write);
 
-    std::vector<beacls::FloatVec> always_alpha;
-		int resultG = always(always_alpha, alpha, tau1, tau2, schemeData, tau, 
-			extraArgs);				
+		 if (dump_file) {
+		 	beacls::IntegerVec Ns = g->get_Ns();
 
-	 //  // save mat file
-		// std::string Car_test_filename("Car_test.mat");
-		// beacls::MatFStream* fs = beacls::openMatFStream(Car_test_filename, 
-		// 	beacls::MatOpenMode_Write);
+		 	g->save_grid(std::string("g"), fs);
+		 	if (!alpha.empty()) {
+		 		save_vector(alpha, std::string("data"), Ns, false, fs);
+		 	}
+		 	// if (!tau.empty()) {
+		 	// 	save_vector(tau, std::string("tau"), Ns, false, fs);
+			// }
+		}
 
-		// if (dump_file) {
-		// 	beacls::IntegerVec Ns = g->get_Ns();
-
-		// 	g->save_grid(std::string("g"), fs);
-		// 	if (!alpha_U_beta.empty()) {
-		// 		save_vector_of_vectors(alpha_U_beta, std::string("data"), Ns, false, fs);
-		// 	}
-		// 	if (!tau.empty()) {
-		// 		save_vector(tau, std::string("tau"), Ns, false, fs);
-		// 	}
-		// }
-
-	  //beacls::closeMatFStream(fs);
+	  	beacls::closeMatFStream(fs);
 
 		if (schemeData) delete schemeData;
 		if (p3D) delete p3D;
@@ -225,4 +205,3 @@ int main(int argc, char *argv[])
 		if (g) delete g;
 		return 0;
 	}
-
