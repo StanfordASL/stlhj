@@ -129,14 +129,10 @@ int main(int argc, char *argv[])
 
 // Define alpha and beta
 	   beacls::FloatVec alpha, beta;
-		 beacls::IntegerVec shape = g->get_shape();
-		 printf("numel: %lu \n",numel);
-		 printf("shape: %lu %lu %lu \n",shape[0],shape[1],shape[2]);
-
 
 
   	   Road_alpha_beta(alpha,beta,g);
-printf("numel: %u \n",alpha.size());
+
     // Dynamical system parameters
 		helperOC::DynSysSchemeData* schemeData = new helperOC::DynSysSchemeData;
 		helperOC::HJIPDE_extraArgs extraArgs;
@@ -189,7 +185,7 @@ printf("numel: %u \n",alpha.size());
 
 		 if (dump_file) {
 		 	beacls::IntegerVec Ns = g->get_Ns();
-			printf("Ns: %lu",Ns[0]);
+
 		 	g->save_grid(std::string("g"), fs);
 		 	if (!alpha.empty()) {
 		 		save_vector(alpha, std::string("data"), Ns, false, fs);

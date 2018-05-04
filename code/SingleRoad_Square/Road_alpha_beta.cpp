@@ -1,3 +1,5 @@
+#include "alpha_road.cpp"
+#include "beta_road.cpp"
 void Road_alpha_beta(
   beacls::FloatVec& alpha,
   beacls::FloatVec& beta,
@@ -18,15 +20,9 @@ void Road_alpha_beta(
    for (size_t dim = 0; dim < num_dim; ++dim) {
      const beacls::FloatVec &xs = g->get_xs(dim);
 
-     if (dim == 0){
-       std::transform(xs.cbegin(), xs.cend(), alpha.begin(),
-           [alpha_offset, length, vehicle_width](const auto &xs_i) {
-           return 1- std::pow(((xs_i - alpha_offset)/(length-vehicle_width)),2); });
-     }
-     else if (dim == 2) {
-     std::transform(xs.cbegin(), xs.cend(), alpha.begin(), alpha.begin(),
-         [theta_offset, length](const auto &xs_i, const auto &alpha_i) {
-         return alpha_i - std::pow(((xs_i- theta_offset)/(M_PI)),2); });
+     if (dim == 0 || dim == 2){
+        alpha_road(alpha, xs, dim, numel, alpha_offset, theta_offset, vehicle_width, length);
+        beta_road(beta, xs, dim, numel, beta_offset, length);
      }
    }
   }

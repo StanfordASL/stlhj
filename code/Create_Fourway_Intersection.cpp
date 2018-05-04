@@ -12,12 +12,8 @@
 #include <fstream>
 #include <iomanip>
 #include <cstring>
-#include "until.cpp"
-#include "eventually.cpp"
-#include "always.cpp"
-
-#include "Square_alpha_beta.cpp"
-#include "Road_alpha_beta.cpp"
+#include "fourway_intersection.cpp"
+#include "add_lane.cpp"
 
 /**
 @brief Tests the Plane class by computing a reachable set and then computing the optimal trajectory from the reachable set.
@@ -94,10 +90,10 @@ int main(int argc, char *argv[])
 
   const beacls::FloatVec
     //gmin{(FLOAT_TYPE)(-8), (FLOAT_TYPE)(-8), (FLOAT_TYPE)0, (FLOAT_TYPE)5};
-		gmin{(FLOAT_TYPE)(-4), (FLOAT_TYPE)(-8), (FLOAT_TYPE)0, (FLOAT_TYPE)5};
+		gmin{(FLOAT_TYPE)(-12), (FLOAT_TYPE)(-12), (FLOAT_TYPE)0, (FLOAT_TYPE)5};
 
   const beacls::FloatVec
-    gmax{(FLOAT_TYPE)4, (FLOAT_TYPE)8, (FLOAT_TYPE)(2*M_PI),(FLOAT_TYPE)25};
+    gmax{(FLOAT_TYPE)12, (FLOAT_TYPE)12, (FLOAT_TYPE)(2*M_PI),(FLOAT_TYPE)25};
 
   levelset::HJI_Grid* g;
   helperOC::Plane* p3D = new helperOC::Plane(
@@ -112,7 +108,7 @@ int main(int argc, char *argv[])
 	else {
 		g = helperOC::createGrid(
 			beacls::FloatVec{gmin[0], gmin[1], gmin[2]},
-			beacls::FloatVec{gmax[0], gmax[1], gmax[2]}, beacls::IntegerVec{40,80,25},
+			beacls::FloatVec{gmax[0], gmax[1], gmax[2]}, beacls::IntegerVec{60,60,25},
 			pdDim);
 		}
 
@@ -128,15 +124,10 @@ int main(int argc, char *argv[])
 		FLOAT_TYPE tau2 = 2.;
 
 // Define alpha and beta
-	   beacls::FloatVec alpha, beta;
-		 beacls::IntegerVec shape = g->get_shape();
-		 printf("numel: %lu \n",numel);
-		 printf("shape: %lu %lu %lu \n",shape[0],shape[1],shape[2]);
+	  beacls::FloatVec alpha;
 
+  	fourway_intersection(alpha,g,gmin,gmax);
 
-
-  	   Road_alpha_beta(alpha,beta,g);
-printf("numel: %u \n",alpha.size());
     // Dynamical system parameters
 		helperOC::DynSysSchemeData* schemeData = new helperOC::DynSysSchemeData;
 		helperOC::HJIPDE_extraArgs extraArgs;
@@ -189,7 +180,7 @@ printf("numel: %u \n",alpha.size());
 
 		 if (dump_file) {
 		 	beacls::IntegerVec Ns = g->get_Ns();
-			printf("Ns: %lu",Ns[0]);
+
 		 	g->save_grid(std::string("g"), fs);
 		 	if (!alpha.empty()) {
 		 		save_vector(alpha, std::string("data"), Ns, false, fs);
