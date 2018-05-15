@@ -13,7 +13,7 @@
 #include <iomanip>
 #include <cstring>
 #include "fourway_intersection.cpp"
-#include "add_lane.cpp"
+#include "until.cpp"
 
 /**
 @brief Tests the Plane class by computing a reachable set and then computing the optimal trajectory from the reachable set.
@@ -76,8 +76,8 @@ int main(int argc, char *argv[])
 
 //!< Plane parameters
 	const FLOAT_TYPE wMax = (FLOAT_TYPE)1;
-	const beacls::FloatVec vrange{ (FLOAT_TYPE)10, (FLOAT_TYPE)15 };
-	const beacls::FloatVec arange{ (FLOAT_TYPE)0, (FLOAT_TYPE)5 };
+	const beacls::FloatVec vrange{ (FLOAT_TYPE)0, (FLOAT_TYPE)5 };
+	const beacls::FloatVec arange{ (FLOAT_TYPE)0, (FLOAT_TYPE)5 }; //may need to be changed if considering acceleration
 	const beacls::FloatVec dMax{ (FLOAT_TYPE)0, (FLOAT_TYPE)0 };
 
 	const FLOAT_TYPE inf = std::numeric_limits<FLOAT_TYPE>::infinity();
@@ -108,7 +108,7 @@ int main(int argc, char *argv[])
 	else {
 		g = helperOC::createGrid(
 			beacls::FloatVec{gmin[0], gmin[1], gmin[2]},
-			beacls::FloatVec{gmax[0], gmax[1], gmax[2]}, beacls::IntegerVec{60,60,25},
+			beacls::FloatVec{gmax[0], gmax[1], gmax[2]}, beacls::IntegerVec{120,120,120},
 			pdDim);
 		}
 
@@ -121,12 +121,18 @@ int main(int argc, char *argv[])
 */
 // Define tau1 and tau2
 		FLOAT_TYPE tau1 = 0.;
-		FLOAT_TYPE tau2 = 2.;
+		FLOAT_TYPE tau2 = 5.;
 
 // Define alpha and beta
-	  beacls::FloatVec alpha;
+		int Command;
 
-  	fourway_intersection(alpha,g,gmin,gmax);
+		beacls::FloatVec alpha;
+		Command = 0; // 0-Go straight; 1-Turn left
+  	fourway_intersection(alpha,g,gmin,gmax,Command);
+
+		beacls::FloatVec beta;
+		Command = 1; // 0-Go straight; 1-Turn left
+		fourway_intersection(beta,g,gmin,gmax,Command);
 
     // Dynamical system parameters
 		helperOC::DynSysSchemeData* schemeData = new helperOC::DynSysSchemeData;
@@ -161,9 +167,9 @@ int main(int argc, char *argv[])
 		extraArgs.execParameters.enable_user_defined_dynamics_on_gpu =
 		enable_user_defined_dynamics_on_gpu;
 
-		// std::vector<beacls::FloatVec> alpha_U_beta;
-		// int resultU = until(alpha_U_beta, alpha, beta, tau1, tau2, schemeData, tau,
-		// 	extraArgs);
+		std::vector<beacls::FloatVec> alpha_U_beta;
+		int resultU = until(alpha_U_beta, alpha, beta, tau1, tau2, schemeData, tau,
+		extraArgs);
 		//
     // std::vector<beacls::FloatVec> event_beta;
 		// int resultF = eventually(event_beta, beta, tau1, tau2, schemeData, tau,
@@ -174,7 +180,7 @@ int main(int argc, char *argv[])
 		// 	extraArgs);
 
 	  // save mat file
-		 std::string Car_test_filename("Car_test.mat");
+		 std::string Car_test_filename("Create_Fourway_Intersection.mat");
 		 beacls::MatFStream* fs = beacls::openMatFStream(Car_test_filename,
 		 beacls::MatOpenMode_Write);
 
@@ -182,12 +188,17 @@ int main(int argc, char *argv[])
 		 	beacls::IntegerVec Ns = g->get_Ns();
 
 		 	g->save_grid(std::string("g"), fs);
-		 	if (!alpha.empty()) {
-		 		save_vector(alpha, std::string("data"), Ns, false, fs);
-		 	}
+		 	// if (!alpha.empty()) {
+		 	// 	save_vector(alpha, std::string("data"), Ns, false, fs);
+		 	// }
+
+			if (!alpha_U_beta.empty()) {
+				save_vector_of_vectors(alpha_U_beta, std::string("alpha_U_beta"), Ns,
+					false, fs);
+				}
 		 	// if (!tau.empty()) {
-		 	// 	save_vector(tau, std::string("tau"), Ns, false, fs);
-			// }
+		 	//  	save_vector(tau, std::string("tau"), Ns, false, fs);
+			//  }
 		}
 
 	  	beacls::closeMatFStream(fs);

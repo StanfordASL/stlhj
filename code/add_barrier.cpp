@@ -1,5 +1,5 @@
 
-void add_lane(
+void add_barrier(
   beacls::FloatVec& lane,
   beacls::FloatVec xs,
   FLOAT_TYPE lane_offset,
