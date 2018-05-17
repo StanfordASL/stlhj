@@ -1,3 +1,6 @@
+2018/05/17: alpha - vector that has the values corresponding to the "Green Light" situation.
+            beta - vector that only has positive values for the starting and target lane.
+
 %% Create_Fourway_Intersection.cpp %%
 - Main script that replaces Car_test.cpp in the original setup.
 - Calls fourway_intersection.cpp to assign values to grid points and passes a "Command"

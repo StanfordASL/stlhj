@@ -37,11 +37,11 @@ void fourway_intersection(
     enhance = 0; //1-enhance value function
 
     for (size_t dim = 0; dim < num_dim; ++dim) {
-
+      // Assign values for the vertical lanes.
       if (dim == 0 || dim == 2){
         const beacls::FloatVec &xs = g->get_xs(dim);
 
-        if (Command == 0){ //0-Go straight; 1-Turn left
+        if (Command == 0){ //0-Green; 1-Red
           theta_offset = M_PI/2;
           range = {0.,4.,-12.,-4.}; //{xmin,xmax,ymin,ymax}
           lane_offset = (range[1]+range[0])/2.;
@@ -73,7 +73,7 @@ void fourway_intersection(
           update_lane(lane_temp,lane,shape,range,gmin,gmax,dim);
         }
 
-        if (Command == 1){
+        if (Command == 1){ //0-Green; 1-Red
           theta_offset = M_PI/2;
           range = {0.,4.,-12.,-4.}; //{xmin,xmax,ymin,ymax}
           lane_offset = (range[1]+range[0])/2.;
@@ -105,10 +105,12 @@ void fourway_intersection(
           // update_lane(lane_temp,lane,shape,range,gmin,gmax,dim);
         }
       }
+
+      // Assign values for the horizontal lanes.
       if (dim == 1 || dim == 2){
         const beacls::FloatVec &xs = g->get_xs(dim);
 
-        if (Command == 0){
+        if (Command == 0){ //0-Green; 1-Red
           theta_offset = M_PI;
           range = {-12.,-4.,0.,4.}; //{xmin,xmax,ymin,ymax}
           lane_offset = (range[3]+range[2])/2.;
@@ -140,7 +142,7 @@ void fourway_intersection(
           update_lane(lane_temp,lane,shape,range,gmin,gmax,dim);
         }
 
-        if (Command == 1){
+        if (Command == 1){ //0-Green; 1-Red
           enhance = 1;
           theta_offset = M_PI;
           range = {-12.,-4.,0.,4.}; //{xmin,xmax,ymin,ymax}
@@ -176,7 +178,8 @@ void fourway_intersection(
         }
       }
 
-      if (Command==0){
+      //ssign values for the Intersection Square
+      if (Command==0){ //0-Green; 1-Red
         const beacls::FloatVec &xs = g->get_xs(dim);
         theta_min = 0.; //right turn
         theta_max = M_PI/2.; //forwards
@@ -218,30 +221,31 @@ void fourway_intersection(
         add_sq(lane_temp,xs_temp,lane_offset,lane_width,vehicle_width,theta_min,theta_max,numel,dim);
         update_lane(lane_temp,lane,shape,range,gmin,gmax,dim);
 
-        if(dim==2){
-          if (Command==0){
-            range = {4.,4.5,0.,4.};
-            get_subvector(lane_temp,lane,shape,range,gmin,gmax,dim);
-            lane_temp.assign(lane_temp.size(), -12.);
-            update_lane(lane_temp,lane,shape,range,gmin,gmax,dim);
-
-            range = {-4.5,-4.,-4.,0.};
-            get_subvector(lane_temp,lane,shape,range,gmin,gmax,dim);
-            lane_temp.assign(lane_temp.size(), -12.);
-            update_lane(lane_temp,lane,shape,range,gmin,gmax,dim);
-
-          } else if (Command==1){
-            range = {-4.,0.,4.,4.5};
-            get_subvector(lane_temp,lane,shape,range,gmin,gmax,dim);
-            lane_temp.assign(lane_temp.size(), -12.);
-            update_lane(lane_temp,lane,shape,range,gmin,gmax,dim);
-
-            range = {0.,4.,-4.5,-4.};
-            get_subvector(lane_temp,lane,shape,range,gmin,gmax,dim);
-            lane_temp.assign(lane_temp.size(), -12.);
-            update_lane(lane_temp,lane,shape,range,gmin,gmax,dim);
-          }
-        }
+        // Create barriers at the relevant sections of the intersection.
+        // if(dim==2){
+        //   if (Command==0){
+        //     range = {4.,4.5,0.,4.};
+        //     get_subvector(lane_temp,lane,shape,range,gmin,gmax,dim);
+        //     lane_temp.assign(lane_temp.size(), -12.);
+        //     update_lane(lane_temp,lane,shape,range,gmin,gmax,dim);
+        //
+        //     range = {-4.5,-4.,-4.,0.};
+        //     get_subvector(lane_temp,lane,shape,range,gmin,gmax,dim);
+        //     lane_temp.assign(lane_temp.size(), -12.);
+        //     update_lane(lane_temp,lane,shape,range,gmin,gmax,dim);
+        //
+        //   } else if (Command==1){
+        //     range = {-4.,0.,4.,4.5};
+        //     get_subvector(lane_temp,lane,shape,range,gmin,gmax,dim);
+        //     lane_temp.assign(lane_temp.size(), -12.);
+        //     update_lane(lane_temp,lane,shape,range,gmin,gmax,dim);
+        //
+        //     range = {0.,4.,-4.5,-4.};
+        //     get_subvector(lane_temp,lane,shape,range,gmin,gmax,dim);
+        //     lane_temp.assign(lane_temp.size(), -12.);
+        //     update_lane(lane_temp,lane,shape,range,gmin,gmax,dim);
+        //   }
+        // }
       }
 
 
