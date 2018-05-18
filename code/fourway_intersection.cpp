@@ -3,6 +3,8 @@
 #include "add_sq.cpp"
 #include "get_subvector.cpp"
 #include "update_lane.cpp"
+#include "add_pyramid.cpp"
+
 void fourway_intersection(
   beacls::FloatVec& lane,
   levelset::HJI_Grid* g,
@@ -11,7 +13,7 @@ void fourway_intersection(
   int Command)
   {
 
-
+    FLOAT_TYPE square_width;
     FLOAT_TYPE vehicle_width = 1.;
     FLOAT_TYPE lane_width = 4.;
 
@@ -151,7 +153,7 @@ void fourway_intersection(
         }
 
         if (Command == 1){ //0-Green; 1-Red
-          enhance = 1;
+          enhance = 0;
           theta_offset = M_PI;
           range = {-12.,-4.,0.,4.}; //{xmin,xmax,ymin,ymax}
           lane_offset = (range[3]+range[2])/2.;
@@ -248,21 +250,35 @@ void fourway_intersection(
             update_lane(lane_temp,lane,shape,range,gmin,gmax,dim);
 
           } //else if (Command==1){
-        //     range = {-4.,0.,4.,4.5};
+            //     range = {-4.,0.,4.,4.5};
+            //     get_subvector(lane_temp,lane,shape,range,gmin,gmax,dim);
+            //     lane_temp.assign(lane_temp.size(), -12.);
+            //     update_lane(lane_temp,lane,shape,range,gmin,gmax,dim);
+            //
+            //     range = {0.,4.,-4.5,-4.};
+            //     get_subvector(lane_temp,lane,shape,range,gmin,gmax,dim);
+            //     lane_temp.assign(lane_temp.size(), -12.);
+            //     update_lane(lane_temp,lane,shape,range,gmin,gmax,dim);
+            //   }
+            // }
+          }
+
+
+        }
+        //Assign values for the Intersection Square (Pyramid: ~/helperOC/DataFile/20180517_5)
+        // if (Command==1){ //0-Green; 1-Red
+        //   if (dim==0 || dim==1){
+        //     const beacls::FloatVec &xs = g->get_xs(dim);
+        //     range = {-4.,4.,-4.,4.}; //{xmin,xmax,ymin,ymax}
+        //     lane_offset = 0.;
+        //     square_width = range[1]-range[0]+1.0;
         //     get_subvector(lane_temp,lane,shape,range,gmin,gmax,dim);
-        //     lane_temp.assign(lane_temp.size(), -12.);
+        //     get_subvector(xs_temp,xs,shape,range,gmin,gmax,dim);
+        //     add_pyramid(lane_temp,xs_temp,dim,numel,lane_offset,square_width);
         //     update_lane(lane_temp,lane,shape,range,gmin,gmax,dim);
-        //
-        //     range = {0.,4.,-4.5,-4.};
-        //     get_subvector(lane_temp,lane,shape,range,gmin,gmax,dim);
-        //     lane_temp.assign(lane_temp.size(), -12.);
-        //     update_lane(lane_temp,lane,shape,range,gmin,gmax,dim);
-        //   }
-        // }
+
+
+          }
+        }
+        }
       }
-
-
-    }
-
-}
-  }
