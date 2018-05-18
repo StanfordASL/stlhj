@@ -14,64 +14,65 @@
 #include <cstring>
 #include "fourway_intersection.cpp"
 #include "until.cpp"
+#include "def_extraArgs.cpp"
 
 /**
 @brief Tests the Plane class by computing a reachable set and then computing the optimal trajectory from the reachable set.
 */
 int main(int argc, char *argv[])
 {
-	bool dump_file = false;
+	bool dump_file = true;
 	if (argc >= 2) {
 		dump_file = (atoi(argv[1]) == 0) ? false : true;
 	}
-	bool useTempFile = false;
-	if (argc >= 3) {
-		useTempFile = (atoi(argv[2]) == 0) ? false : true;
-	}
-	const bool keepLast = false;
-	const bool calculateTTRduringSolving = false;
-	levelset::DelayedDerivMinMax_Type delayedDerivMinMax =
-	  levelset::DelayedDerivMinMax_Disable;
-	if (argc >= 4) {
-		switch (atoi(argv[3])) {
-			default:
-			case 0:
-			delayedDerivMinMax = levelset::DelayedDerivMinMax_Disable;
-			break;
-			case 1:
-			delayedDerivMinMax = levelset::DelayedDerivMinMax_Always;
-			break;
-			case 2:
-			delayedDerivMinMax = levelset::DelayedDerivMinMax_Adaptive;
-			break;
-		}
-	}
-
-	bool useCuda = false;
-	if (argc >= 5) {
-		useCuda = (atoi(argv[4]) == 0) ? false : true;
-	}
-	int num_of_threads = 0;
-	if (argc >= 6) {
-		num_of_threads = atoi(argv[5]);
-	}
-	int num_of_gpus = 0;
-	if (argc >= 7) {
-		num_of_gpus = atoi(argv[6]);
-	}
-	size_t line_length_of_chunk = 1;
-	if (argc >= 8) {
-		line_length_of_chunk = atoi(argv[7]);
-	}
-
-	bool enable_user_defined_dynamics_on_gpu = true;
-	if (argc >= 9) {
-		enable_user_defined_dynamics_on_gpu = (atoi(argv[8]) == 0) ? false : true;
-	}
+	// bool useTempFile = false;
+	// if (argc >= 3) {
+	// 	useTempFile = (atoi(argv[2]) == 0) ? false : true;
+	// }
+	// const bool keepLast = false;
+	// const bool calculateTTRduringSolving = false;
+	// levelset::DelayedDerivMinMax_Type delayedDerivMinMax =
+	//   levelset::DelayedDerivMinMax_Disable;
+	// if (argc >= 4) {
+	// 	switch (atoi(argv[3])) {
+	// 		default:
+	// 		case 0:
+	// 		delayedDerivMinMax = levelset::DelayedDerivMinMax_Disable;
+	// 		break;
+	// 		case 1:
+	// 		delayedDerivMinMax = levelset::DelayedDerivMinMax_Always;
+	// 		break;
+	// 		case 2:
+	// 		delayedDerivMinMax = levelset::DelayedDerivMinMax_Adaptive;
+	// 		break;
+	// 	}
+	// }
+	//
+	// bool useCuda = false;
+	// if (argc >= 5) {
+	// 	useCuda = (atoi(argv[4]) == 0) ? false : true;
+	// }
+	// int num_of_threads = 0;
+	// if (argc >= 6) {
+	// 	num_of_threads = atoi(argv[5]);
+	// }
+	// int num_of_gpus = 0;
+	// if (argc >= 7) {
+	// 	num_of_gpus = atoi(argv[6]);
+	// }
+	// size_t line_length_of_chunk = 1;
+	// if (argc >= 8) {
+	// 	line_length_of_chunk = atoi(argv[7]);
+	// }
+	//
+	// bool enable_user_defined_dynamics_on_gpu = true;
+	// if (argc >= 9) {
+	// 	enable_user_defined_dynamics_on_gpu = (atoi(argv[8]) == 0) ? false : true;
+	// }
 
 //!< Compute reachable set
 	const FLOAT_TYPE tMax = 5;
-	const FLOAT_TYPE dt = 0.25;
+	const FLOAT_TYPE dt = 5./20.;
 	beacls::FloatVec tau = generateArithmeticSequence<FLOAT_TYPE>(0., dt, tMax);
 
 //!< Plane parameters
@@ -136,40 +137,50 @@ int main(int argc, char *argv[])
 
     // Dynamical system parameters
 		helperOC::DynSysSchemeData* schemeData = new helperOC::DynSysSchemeData;
-		helperOC::HJIPDE_extraArgs extraArgs;
+		// helperOC::HJIPDE_extraArgs extraArgs;
 
     // Target set and visualization
-		extraArgs.visualize = true;
+		//extraArgs.visualize = true;
 
 		schemeData->set_grid(g);
+
 		if (accel) {
 			schemeData->dynSys = p4D;
-			extraArgs.plotData.plotDims = beacls::IntegerVec{ 1, 1, 0, 0};
-			extraArgs.plotData.projpt =
-			beacls::FloatVec{p4D->get_x()[2], p4D->get_x()[3]};
 		}
 		else {
 			schemeData->dynSys = p3D;
-			extraArgs.plotData.plotDims = beacls::IntegerVec{ 1, 1, 0};
-			extraArgs.plotData.projpt = beacls::FloatVec{p3D->get_x()[2]};
 		}
+		// if (accel) {
+		// 	schemeData->dynSys = p4D;
+		// 	extraArgs.plotData.plotDims = beacls::IntegerVec{ 1, 1, 0, 0};
+		// 	extraArgs.plotData.projpt =
+		// 	beacls::FloatVec{p4D->get_x()[2], p4D->get_x()[3]};
+		// }
+		// else {
+		// 	schemeData->dynSys = p3D;
+		// 	extraArgs.plotData.plotDims = beacls::IntegerVec{ 1, 1, 0};
+		// 	extraArgs.plotData.projpt = beacls::FloatVec{p3D->get_x()[2]};
+		// }
+		//
+		// extraArgs.deleteLastPlot = true;
+		// extraArgs.fig_filename = "figs/Car_test";
+		//
+		// extraArgs.execParameters.line_length_of_chunk = line_length_of_chunk;
+		// extraArgs.execParameters.calcTTR = calculateTTRduringSolving;
+		// extraArgs.keepLast = keepLast;
+		// extraArgs.execParameters.useCuda = useCuda;
+		// extraArgs.execParameters.num_of_gpus = num_of_gpus;
+		// extraArgs.execParameters.num_of_threads = num_of_threads;
+		// extraArgs.execParameters.delayedDerivMinMax = delayedDerivMinMax;
+		// extraArgs.execParameters.enable_user_defined_dynamics_on_gpu =
+		// enable_user_defined_dynamics_on_gpu;
 
-		extraArgs.deleteLastPlot = true;
-		extraArgs.fig_filename = "figs/Car_test";
+		helperOC::HJIPDE_extraArgs extraArgs =
+			def_extraArgs(accel, schemeData->dynSys);
 
-		extraArgs.execParameters.line_length_of_chunk = line_length_of_chunk;
-		extraArgs.execParameters.calcTTR = calculateTTRduringSolving;
-		extraArgs.keepLast = keepLast;
-		extraArgs.execParameters.useCuda = useCuda;
-		extraArgs.execParameters.num_of_gpus = num_of_gpus;
-		extraArgs.execParameters.num_of_threads = num_of_threads;
-		extraArgs.execParameters.delayedDerivMinMax = delayedDerivMinMax;
-		extraArgs.execParameters.enable_user_defined_dynamics_on_gpu =
-		enable_user_defined_dynamics_on_gpu;
-
-		std::vector<beacls::FloatVec> alpha_U_beta;
-		int resultU = until(alpha_U_beta, alpha, beta, tau1, tau2, schemeData, tau,
-		extraArgs);
+		// std::vector<beacls::FloatVec> alpha_U_beta;
+		// int resultU = until(alpha_U_beta, alpha, beta, tau1, tau2, schemeData, tau,
+		// extraArgs);
 		//
     // std::vector<beacls::FloatVec> event_beta;
 		// int resultF = eventually(event_beta, beta, tau1, tau2, schemeData, tau,
@@ -180,27 +191,25 @@ int main(int argc, char *argv[])
 		// 	extraArgs);
 
 	  // save mat file
-		 std::string Car_test_filename("Create_Fourway_Intersection.mat");
+		 std::string Car_test_filename("alpha_U_beta.mat");
 		 beacls::MatFStream* fs = beacls::openMatFStream(Car_test_filename,
 		 beacls::MatOpenMode_Write);
-
 		 if (dump_file) {
 		 	beacls::IntegerVec Ns = g->get_Ns();
-
 		 	g->save_grid(std::string("g"), fs);
-		 	// if (!alpha.empty()) {
-		 	// 	save_vector(alpha, std::string("data"), Ns, false, fs);
-		 	// }
+			// if (!alpha_U_beta.empty()) {
+			// 	save_vector_of_vectors(alpha_U_beta, std::string("alpha_U_beta"), Ns,
+			// 		false, fs);
+			// 	}
 
-			if (!alpha_U_beta.empty()) {
-				save_vector_of_vectors(alpha_U_beta, std::string("alpha_U_beta"), Ns,
-					false, fs);
-				}
-		 	// if (!tau.empty()) {
-		 	//  	save_vector(tau, std::string("tau"), Ns, false, fs);
-			//  }
+			if (!alpha.empty()) {
+ 			  save_vector(beta, std::string("data"), Ns, false, fs);
+ 			  }
+
+			// if (!beta.empty()) {
+			// 	save_vector(beta, std::string("data"), Ns, false, fs);
+			// 	}
 		}
-
 	  	beacls::closeMatFStream(fs);
 
 		if (schemeData) delete schemeData;
