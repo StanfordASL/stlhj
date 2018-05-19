@@ -199,8 +199,8 @@ void fourway_intersection(
         else if (dim==1){lane_offset = (range[3]+range[2])/2.;}
         get_subvector(lane_temp,lane,shape,range,gmin,gmax,dim);
         get_subvector(xs_temp,xs,shape,range,gmin,gmax,dim);
-        add_sq(lane_temp,xs_temp,lane_offset,lane_width,vehicle_width,theta_min,theta_max,numel,dim);
-        //lane_temp.assign(lane_temp.size(), 10.);
+        //add_sq(lane_temp,xs_temp,lane_offset,lane_width,vehicle_width,theta_min,theta_max,numel,dim);
+        lane_temp.assign(lane_temp.size(), 10.);
         update_lane(lane_temp,lane,shape,range,gmin,gmax,dim);
 
         theta_min = M_PI/2.; //forwards
@@ -210,8 +210,8 @@ void fourway_intersection(
         else if (dim==1){lane_offset = (range[3]+range[2])/2.;}
         get_subvector(lane_temp,lane,shape,range,gmin,gmax,dim);
         get_subvector(xs_temp,xs,shape,range,gmin,gmax,dim);
-        add_sq(lane_temp,xs_temp,lane_offset,lane_width,vehicle_width,theta_min,theta_max,numel,dim);
-        //lane_temp.assign(lane_temp.size(), 10.);
+        //add_sq(lane_temp,xs_temp,lane_offset,lane_width,vehicle_width,theta_min,theta_max,numel,dim);
+        lane_temp.assign(lane_temp.size(), 10.);
         update_lane(lane_temp,lane,shape,range,gmin,gmax,dim);
 
         theta_min = M_PI; //left turn
@@ -221,8 +221,8 @@ void fourway_intersection(
         else if (dim==1){lane_offset = (range[3]+range[2])/2.;}
         get_subvector(lane_temp,lane,shape,range,gmin,gmax,dim);
         get_subvector(xs_temp,xs,shape,range,gmin,gmax,dim);
-        add_sq(lane_temp,xs_temp,lane_offset,lane_width,vehicle_width,theta_min,theta_max,numel,dim);
-        //lane_temp.assign(lane_temp.size(), 10.);
+        //add_sq(lane_temp,xs_temp,lane_offset,lane_width,vehicle_width,theta_min,theta_max,numel,dim);
+        lane_temp.assign(lane_temp.size(), 10.);
         update_lane(lane_temp,lane,shape,range,gmin,gmax,dim);
 
         theta_min = 3.*M_PI/2.; //backwards
@@ -232,8 +232,8 @@ void fourway_intersection(
         else if (dim==1){lane_offset = (range[3]+range[2])/2.;}
         get_subvector(lane_temp,lane,shape,range,gmin,gmax,dim);
         get_subvector(xs_temp,xs,shape,range,gmin,gmax,dim);
-        //lane_temp.assign(lane_temp.size(), 10.);
-        add_sq(lane_temp,xs_temp,lane_offset,lane_width,vehicle_width,theta_min,theta_max,numel,dim);
+        lane_temp.assign(lane_temp.size(), 10.);
+        //add_sq(lane_temp,xs_temp,lane_offset,lane_width,vehicle_width,theta_min,theta_max,numel,dim);
         update_lane(lane_temp,lane,shape,range,gmin,gmax,dim);
 
         //Create barriers at the relevant sections of the intersection.
@@ -280,5 +280,3 @@ void fourway_intersection(
 
           }
         }
-        }
-      }
