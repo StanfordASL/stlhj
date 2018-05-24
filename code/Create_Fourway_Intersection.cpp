@@ -71,8 +71,8 @@ int main(int argc, char *argv[])
 	// }
 
 //!< Compute reachable set
-	const FLOAT_TYPE tMax = 5;
-	const FLOAT_TYPE dt = 5./20.;
+	const FLOAT_TYPE tMax = 3;
+	const FLOAT_TYPE dt = tMax/12.;
 	beacls::FloatVec tau = generateArithmeticSequence<FLOAT_TYPE>(0., dt, tMax);
 
 //!< Plane parameters
@@ -91,10 +91,10 @@ int main(int argc, char *argv[])
 
   const beacls::FloatVec
     //gmin{(FLOAT_TYPE)(-8), (FLOAT_TYPE)(-8), (FLOAT_TYPE)0, (FLOAT_TYPE)5};
-		gmin{(FLOAT_TYPE)(-12), (FLOAT_TYPE)(-12), (FLOAT_TYPE)0, (FLOAT_TYPE)5};
+		gmin{(FLOAT_TYPE)(-20), (FLOAT_TYPE)(-20), (FLOAT_TYPE)0, (FLOAT_TYPE)5};
 
   const beacls::FloatVec
-    gmax{(FLOAT_TYPE)12, (FLOAT_TYPE)12, (FLOAT_TYPE)(2*M_PI),(FLOAT_TYPE)25};
+    gmax{(FLOAT_TYPE)20, (FLOAT_TYPE)20, (FLOAT_TYPE)(2*M_PI),(FLOAT_TYPE)25};
 
   levelset::HJI_Grid* g;
   helperOC::Plane* p3D = new helperOC::Plane(
@@ -178,9 +178,9 @@ int main(int argc, char *argv[])
 		helperOC::HJIPDE_extraArgs extraArgs =
 			def_extraArgs(accel, schemeData->dynSys);
 
-		// std::vector<beacls::FloatVec> alpha_U_beta;
-		// int resultU = until(alpha_U_beta, alpha, beta, tau1, tau2, schemeData, tau,
-		// extraArgs);
+		std::vector<beacls::FloatVec> alpha_U_beta;
+		int resultU = until(alpha_U_beta, alpha, beta, tau1, tau2, schemeData, tau,
+		extraArgs);
 
     // std::vector<beacls::FloatVec> event_beta;
 		// int resultF = eventually(event_beta, beta, tau1, tau2, schemeData, tau,
@@ -197,14 +197,14 @@ int main(int argc, char *argv[])
 		 if (dump_file) {
 		 	beacls::IntegerVec Ns = g->get_Ns();
 		 	g->save_grid(std::string("g"), fs);
-			// if (!alpha_U_beta.empty()) {
-			// 	save_vector_of_vectors(alpha_U_beta, std::string("alpha_U_beta"), Ns,
-			// 		false, fs);
-			// 	}
+			if (!alpha_U_beta.empty()) {
+				save_vector_of_vectors(alpha_U_beta, std::string("alpha_U_beta"), Ns,
+					false, fs);
+				}
 
-			if (!alpha.empty()) {
- 			  save_vector(alpha, std::string("data"), Ns, false, fs);
- 			  }
+			// if (!alpha.empty()) {
+ 			//   save_vector(alpha, std::string("data"), Ns, false, fs);
+ 			//   }
 
 			// if (!beta.empty()) {
 			// 	save_vector(beta, std::string("data"), Ns, false, fs);
