@@ -72,7 +72,7 @@ int main(int argc, char *argv[])
 
 //!< Compute reachable set
 	const FLOAT_TYPE tMax = 3;
-	const FLOAT_TYPE dt = tMax/12.;
+	const FLOAT_TYPE dt = 3./12.;
 	beacls::FloatVec tau = generateArithmeticSequence<FLOAT_TYPE>(0., dt, tMax);
 
 //!< Plane parameters
@@ -122,7 +122,7 @@ int main(int argc, char *argv[])
 */
 // Define tau1 and tau2
 		FLOAT_TYPE tau1 = 0.;
-		FLOAT_TYPE tau2 = 5.;
+		FLOAT_TYPE tau2 = 3.;
 
 // Define alpha and beta
 		int Command;

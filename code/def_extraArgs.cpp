@@ -8,9 +8,9 @@ helperOC::HJIPDE_extraArgs def_extraArgs(
 	extraArgs.visualize = true;
 
 	if (accel) {
-		extraArgs.plotData.plotDims = beacls::IntegerVec{ 1, 1, 0, 0};
+		extraArgs.plotData.plotDims = beacls::IntegerVec{ 1, 1, 0, 0, 0};
 		extraArgs.plotData.projpt =
-		beacls::FloatVec{p->get_x()[2], p->get_x()[3]};
+		beacls::FloatVec{p->get_x()[2], p->get_x()[3], p->get_x()[4]};
 	}
 	else {
 		extraArgs.plotData.plotDims = beacls::IntegerVec{ 1, 1, 0};
