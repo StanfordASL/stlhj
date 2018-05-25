@@ -42,7 +42,7 @@ int main(int argc, char *argv[])
   const beacls::IntegerVec pdDim{2};
 
 // Grid Target and obstacle
-	bool accel = true;
+	bool accel = false;
   const beacls::FloatVec initState{(FLOAT_TYPE)0, (FLOAT_TYPE)25, 
 			(FLOAT_TYPE)(270 * M_PI / 180), (FLOAT_TYPE)15};
 
