@@ -2,9 +2,8 @@
 #include <levelset/levelset.hpp>
 #include <helperOC/helperOC.hpp>
 #include <helperOC/DynSys/DynSys/DynSysSchemeData.hpp>
-#include <helperOC/DynSys/Plane/Plane.hpp>
-#include <helperOC/DynSys/Plane4D/Plane4D.hpp>
-//#include <helperOC/DynSys/Plane5D/Plane5D.hpp>
+#include "Car4D_Car1D.cpp"
+
 #include <cmath>
 #include <numeric>
 #include <functional>
@@ -13,7 +12,7 @@
 #include <fstream>
 #include <iomanip>
 #include <cstring>
-#include "fourway_intersection_5D.cpp"
+#include "fourway_intersection.cpp"
 #include "until.cpp"
 #include "def_extraArgs.cpp"
 
@@ -50,10 +49,7 @@ int main(int argc, char *argv[])
     gmax{(FLOAT_TYPE)20, (FLOAT_TYPE)20, (FLOAT_TYPE)(2*M_PI),(FLOAT_TYPE)5,(FLOAT_TYPE)12};
 
   levelset::HJI_Grid* g;
-  helperOC::Plane* p3D = new helperOC::Plane(
-  	beacls::FloatVec{initState[0], initState[1], initState[2]},
-  	wMax, vrange, dMax);
-  helperOC::Plane4D* p5D = new helperOC::Plane4D(initState, wMax, arange, dMax);
+  helperOC::Car4D_Car1D* p4D1D = new helperOC::Car4D_Car1D(initState, wMax, arange, dMax);
 	if (accel) {
   	g = helperOC::createGrid(gmin, gmax,
 				beacls::IntegerVec{20,20,20,20,20}, pdDim);
@@ -82,12 +78,12 @@ int main(int argc, char *argv[])
 		beacls::FloatVec alpha;
 		//alpha.assign(numel, -12.);
 		Command = 0; // 0-Go straight; 1-Turn left
-  	fourway_intersection_5D(alpha,g,gmin,gmax,Command);
+  	fourway_intersection(alpha,g,gmin,gmax,Command);
 
 		beacls::FloatVec beta;
 		//beta.assign(numel, -12.);
 		Command = 1; // 0-Go straight; 1-Turn left
-		fourway_intersection_5D(beta,g,gmin,gmax,Command);
+		fourway_intersection(beta,g,gmin,gmax,Command);
 
     // Dynamical system parameters
 		helperOC::DynSysSchemeData* schemeData = new helperOC::DynSysSchemeData;
@@ -97,13 +93,7 @@ int main(int argc, char *argv[])
 		//extraArgs.visualize = true;
 
 		schemeData->set_grid(g);
-
-		if (accel) {
-			schemeData->dynSys = p5D;
-		}
-		else {
-			schemeData->dynSys = p3D;
-		}
+		schemeData->dynSys = p4D1D;
 
 		helperOC::HJIPDE_extraArgs extraArgs =
 			def_extraArgs(accel, schemeData->dynSys);
@@ -143,9 +133,7 @@ int main(int argc, char *argv[])
 	  	beacls::closeMatFStream(fs);
 
 		if (schemeData) delete schemeData;
-		if (p3D) delete p3D;
-		//if (p4D) delete p4D;
-		if (p5D) delete p5D;
+		if (p4D1D) delete p4D1D;
 		if (g) delete g;
 		return 0;
 	}

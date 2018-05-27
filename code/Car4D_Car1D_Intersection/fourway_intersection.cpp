@@ -1,11 +1,9 @@
 #include "theta_diff.cpp"
-#include "add_lane_5D.cpp"
-#include "add_sq.cpp"
-#include "get_subvector_5D.cpp"
-#include "update_lane_5D.cpp"
-#include "add_pyramid.cpp"
+#include "add_lane.cpp"
+#include "get_subvector.cpp"
+#include "update_lane.cpp"
 
-void fourway_intersection_5D(
+void fourway_intersection(
   beacls::FloatVec& lane,
   levelset::HJI_Grid* g,
   beacls::FloatVec gmin,

@@ -1,4 +1,4 @@
-#include <helperOC/DynSys/Plane5D/Plane5D.hpp>
+#include "Car4D_Car1D.hpp"
 #include <iostream>
 #include <cmath>
 #include <algorithm>
@@ -8,7 +8,7 @@
 using namespace helperOC;
 
 
-Plane5D::Plane5D(
+Car4D_Car1D::Car4D_Car1D(
     const beacls::FloatVec& x,
     const FLOAT_TYPE wMax,
     const beacls::FloatVec& aRange,
@@ -30,7 +30,7 @@ Plane5D::Plane5D(
   DynSys::push_back_xhist(x);
 }
 
-Plane5D::Plane5D(
+Car4D_Car1D::Car4D_Car1D(
     beacls::MatFStream* fs,
     beacls::MatVariable* variable_ptr):
     DynSys(fs, variable_ptr),
@@ -46,10 +46,10 @@ Plane5D::Plane5D(
   load_vector(dims, std::string("dims"), dummy, true, fs, variable_ptr);
 }
 
-Plane5D::~Plane5D() {
+Car4D_Car1D::~Car4D_Car1D() {
 }
 
-bool Plane5D::operator==(const Plane5D& rhs) const {
+bool Car4D_Car1D::operator==(const Car4D_Car1D& rhs) const {
   if (this == &rhs) return true;
   else if (!DynSys::operator==(rhs)) return false;
   else if (wMax != rhs.wMax) return false;  //!< Angular control bounds
@@ -71,13 +71,13 @@ bool Plane5D::operator==(const Plane5D& rhs) const {
   return true;
 }
 
-bool Plane5D::operator==(const DynSys& rhs) const {
+bool Car4D_Car1D::operator==(const DynSys& rhs) const {
   if (this == &rhs) return true;
   else if (typeid(*this) != typeid(rhs)) return false;
-  else return operator==(dynamic_cast<const Plane5D&>(rhs));
+  else return operator==(dynamic_cast<const Car4D_Car1D&>(rhs));
 }
 
-bool Plane5D::save(
+bool Car4D_Car1D::save(
     beacls::MatFStream* fs,
     beacls::MatVariable* variable_ptr) {
   bool result = DynSys::save( fs, variable_ptr);
@@ -99,7 +99,7 @@ bool Plane5D::save(
   return result;
 }
 
-bool Plane5D::optCtrl0_cell_helper(
+bool Car4D_Car1D::optCtrl0_cell_helper(
     beacls::FloatVec& uOpt0,
     const std::vector<const FLOAT_TYPE*>& derivs,
     const beacls::IntegerVec& deriv_sizes,
@@ -136,7 +136,7 @@ bool Plane5D::optCtrl0_cell_helper(
   return true;
 }
 
-bool Plane5D::optCtrl1_cell_helper(
+bool Car4D_Car1D::optCtrl1_cell_helper(
     beacls::FloatVec& uOpt1,
     const std::vector<const FLOAT_TYPE* >& derivs,
     const beacls::IntegerVec& deriv_sizes,
@@ -173,7 +173,7 @@ bool Plane5D::optCtrl1_cell_helper(
   return true;
 }
 
-bool Plane5D::optDstb0_cell_helper(
+bool Car4D_Car1D::optDstb0_cell_helper(
     beacls::FloatVec& dOpt0,
     const std::vector<const FLOAT_TYPE* >& derivs,
     const beacls::IntegerVec& deriv_sizes,
@@ -211,7 +211,7 @@ bool Plane5D::optDstb0_cell_helper(
   return true;
 
 }
-bool Plane5D::optDstb1_cell_helper(
+bool Car4D_Car1D::optDstb1_cell_helper(
     beacls::FloatVec& dOpt1,
     const std::vector<const FLOAT_TYPE* >& derivs,
     const beacls::IntegerVec& deriv_sizes,
@@ -244,12 +244,15 @@ bool Plane5D::optDstb1_cell_helper(
       default:
         std::cerr << "Unknown uMode!: " << dMode << std::endl;
         return false;
+
+
     }
   }
   return true;
 }
 
-bool Plane5D::optDstb2_cell_helper(
+
+bool Car4D_Car1D::optDstb2_cell_helper(
     beacls::FloatVec& dOpt1,
     const std::vector<const FLOAT_TYPE* >& derivs,
     const beacls::IntegerVec& deriv_sizes,
@@ -287,7 +290,7 @@ bool Plane5D::optDstb2_cell_helper(
   return true;
 }
 
-bool Plane5D::optCtrl(
+bool Car4D_Car1D::optCtrl(
     std::vector<beacls::FloatVec>& uOpts,
     const FLOAT_TYPE,
     const std::vector<beacls::FloatVec::const_iterator>&,
@@ -313,7 +316,8 @@ bool Plane5D::optCtrl(
   return result;
 }
 
-bool Plane5D::optDstb(
+
+bool Car4D_Car1D::optDstb(
     std::vector<beacls::FloatVec>& dOpts,
     const FLOAT_TYPE,
     const std::vector<beacls::FloatVec::const_iterator >&,
@@ -340,7 +344,7 @@ bool Plane5D::optDstb(
 
   return result;
 }
-bool Plane5D::dynamics_cell_helper(
+bool Car4D_Car1D::dynamics_cell_helper(
     std::vector<beacls::FloatVec>& dxs,
     const beacls::FloatVec::const_iterator& x_ites2,
     const beacls::FloatVec::const_iterator& x_ites3,
@@ -366,7 +370,7 @@ bool Plane5D::dynamics_cell_helper(
       break;
 
     case 1: {
-        //dx_i.assign(x2_size, 10.);
+      //  dx_i.assign(x2_size, 10.);
         dx_i.resize(x2_size);
         const beacls::FloatVec& ds_1 = ds[1];
         for (size_t index = 0; index < x2_size; ++index) {
@@ -375,29 +379,30 @@ bool Plane5D::dynamics_cell_helper(
       }
       break;
 
-    case 2:
-      //dx_i.assign(x2_size, 10.);
+    case 2:{
+//      dx_i.assign(x2_size, 10.);
       dx_i.resize(us[0].size());
       std::copy(us[0].cbegin(), us[0].cend(), dx_i.begin());
+    }
       break;
 
-    case 3:
-      //dx_i.assign(x2_size, 10.);
+    case 3:{
+//      dx_i.assign(x2_size, 10.);
       dx_i.resize(us[1].size());
       std::copy(us[1].cbegin(), us[1].cend(), dx_i.begin());
+    }
       break;
 
     case 4:{
-        //dx_i.assign(x2_size, 10.);
+          //dx_i.assign(x2_size, 10.);
         dx_i.resize(x2_size);
         const beacls::FloatVec& ds_1 = ds[2];
         for (size_t index = 0; index < x2_size; ++index) {
-          dx_i[index] = ds_1[index];
+        dx_i[index] = ds_1[index];
         }
       }
-
     default: {
-      std::cerr << "Only dimension 1-5 are defined for dynamics of Plane5D!"
+      std::cerr << "Only dimension 1-4 are defined for dynamics of Car4D_Car1D!"
       << std::endl;
       result = false;
     }
@@ -408,7 +413,7 @@ bool Plane5D::dynamics_cell_helper(
 
   return result;
 }
-bool Plane5D::dynamics(
+bool Car4D_Car1D::dynamics(
     std::vector<beacls::FloatVec>& dx,
     const FLOAT_TYPE,
     const std::vector<beacls::FloatVec::const_iterator >& x_ites,
@@ -433,13 +438,13 @@ bool Plane5D::dynamics(
   if (dst_target_dim == std::numeric_limits<size_t>::max()) {
     for (size_t dim = 0; dim < dims.size(); ++dim) {
       result &= dynamics_cell_helper(dx, x_ites2, x_ites3, us, ds,
-        x_sizes[src_target_dim2_index], x_sizes[src_target_dim3_index], x_sizes[src_target_dim4_index], dim);
+        x_sizes[src_target_dim2_index], x_sizes[src_target_dim3_index], dim);
     }
   }
   else {
     if (dst_target_dim < dims.size())
       result &= dynamics_cell_helper(dx, x_ites2, x_ites3, us, ds,
-        x_sizes[src_target_dim2_index], x_sizes[src_target_dim3_index], x_sizes[src_target_dim4_index],
+        x_sizes[src_target_dim2_index], x_sizes[src_target_dim3_index],
         dst_target_dim);
     else {
       std::cerr << "Invalid target dimension for dynamics: " << dst_target_dim

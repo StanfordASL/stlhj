@@ -1,5 +1,5 @@
-#ifndef __Plane5D_hpp__
-#define __Plane5D_hpp__
+#ifndef __Car4D_Car1D_hpp__
+#define __Car4D_Car1D_hpp__
 
 //! Prefix to generate Visual C++ DLL
 #ifdef _MAKE_VC_DLL
@@ -17,12 +17,11 @@
 #include <iostream>
 #include <cstring>
 #include <utility>
-#include "/home/qizhan/BEACLS/beacls/sources/modules/helperOC/DynSys/Plane5D/Plane5D.cpp"
 using namespace std::rel_ops;
 namespace helperOC {
 	/*
 		Dynamics:
-		Dynamics of the Plane4D
+		Dynamics of the Car4D_Car1D
 		\dot{x}_1 = x_4 * cos(x_3) + d_1
 		\dot{x}_2 = x_4 * sin(x_3) + d_2
 		\dot{x}_3 = u_1 = w
@@ -30,7 +29,7 @@ namespace helperOC {
 		wMin <= w <= wMax
 		aMin <= a <= aMax
 	*/
-	class Plane5D : public DynSys {
+	class Car4D_Car1D : public DynSys {
 	public:
 	protected:
 		FLOAT_TYPE wMax;	//!< Angular control bounds
@@ -48,7 +47,7 @@ namespace helperOC {
 		@return	a Plane object
 		*/
 		PREFIX_VC_DLL
-			Plane5D(
+			Car4D_Car1D(
 				const beacls::FloatVec& x,
 				const FLOAT_TYPE wMax,
 				const beacls::FloatVec& aRange,
@@ -56,18 +55,18 @@ namespace helperOC {
 				const beacls::IntegerVec& dims = beacls::IntegerVec{ 0,1,2,3,4 }
 		);
 		PREFIX_VC_DLL
-			Plane5D(
+			Car4D_Car1D(
 				beacls::MatFStream* fs,
 				beacls::MatVariable* variable_ptr = NULL
 			);
 		PREFIX_VC_DLL
-			virtual ~Plane5D();
+			virtual ~Car4D_Car1D();
 		PREFIX_VC_DLL
-			virtual bool operator==(const Plane5D& rhs) const;
+			virtual bool operator==(const Car4D_Car1D& rhs) const;
 		PREFIX_VC_DLL
 			virtual bool operator==(const DynSys& rhs) const;
-		virtual Plane5D* clone() const {
-			return new Plane5D(*this);
+		virtual Car4D_Car1D* clone() const {
+			return new Car4D_Car1D(*this);
 		}
 		PREFIX_VC_DLL
 			virtual bool save(
@@ -101,7 +100,7 @@ namespace helperOC {
 				const helperOC::DynSys_DMode_Type dMode
 			) const;
 		/*
-		@brief 	Dynamics of the Plane4D
+		@brief 	Dynamics of the Car4D_Car1D
 		\dot{x}_1 = x_4 * cos(x_3) + d_1
 		\dot{x}_2 = x_4 * sin(x_3) + d_2
 		\dot{x}_3 = u_1 = u_1
@@ -143,7 +142,7 @@ namespace helperOC {
 				const helperOC::DynSys_DMode_Type dMode
 			) const;
 		/*
-		@brief 	Dynamics of the Plane4D
+		@brief 	Dynamics of the Car4D_Car1D
 		\dot{x}_1 = x_4 * cos(x_3) + d_1
 		\dot{x}_2 = x_4 * sin(x_3) + d_2
 		\dot{x}_3 = u_1 = u_1
@@ -165,11 +164,11 @@ namespace helperOC {
 		/** @overload
 		Disable operator=
 		*/
-		Plane5D& operator=(const Plane5D& rhs);
+		Car4D_Car1D& operator=(const Car4D_Car1D& rhs);
 		/** @overload
 		Disable copy constructor
 		*/
-		Plane5D(const Plane5D& rhs) :
+		Car4D_Car1D(const Car4D_Car1D& rhs) :
 			DynSys(rhs),
 			wMax(rhs.wMax),	//!< Angular control bounds
 			aRange(rhs.aRange),	//!< Acceleration control bounds
@@ -223,4 +222,4 @@ namespace helperOC {
 		) const;
 	};
 };
-#endif	/* __Plane4D_hpp__ */
+#endif	/* __Car4D_Car1D_hpp__ */
