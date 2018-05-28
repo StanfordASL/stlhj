@@ -253,7 +253,7 @@ bool Car4D_Car1D::optDstb1_cell_helper(
 
 
 bool Car4D_Car1D::optDstb2_cell_helper(
-    beacls::FloatVec& dOpt1,
+    beacls::FloatVec& dOpt2,
     const std::vector<const FLOAT_TYPE* >& derivs,
     const beacls::IntegerVec& deriv_sizes,
     const helperOC::DynSys_DMode_Type dMode,
@@ -265,7 +265,7 @@ bool Car4D_Car1D::optDstb2_cell_helper(
 
     if (length == 0 || deriv == NULL) return false;
 
-    dOpt1.resize(length);
+    dOpt2.resize(length);
     const FLOAT_TYPE dMax2 = dMax[2];
     switch (dMode) {
       case helperOC::DynSys_DMode_Max:
@@ -331,7 +331,7 @@ bool Car4D_Car1D::optDstb(
     helperOC::DynSys_DMode_Min : dMode;
   const size_t src_target_dim0_index = find_val(dims, 0);
   const size_t src_target_dim1_index = find_val(dims, 1);
-  const size_t src_target_dim1_index = find_val(dims, 2);
+  const size_t src_target_dim2_index = find_val(dims, 2);
 
   dOpts.resize(get_nd());
   bool result = true;
@@ -339,7 +339,7 @@ bool Car4D_Car1D::optDstb(
     modified_dMode, src_target_dim0_index);
   result &= optDstb1_cell_helper(dOpts[1], deriv_ptrs, deriv_sizes,
     modified_dMode, src_target_dim1_index);
-  result &= optDstb1_cell_helper(dOpts[2], deriv_ptrs, deriv_sizes,
+  result &= optDstb2_cell_helper(dOpts[2], deriv_ptrs, deriv_sizes,
     modified_dMode, src_target_dim2_index);
 
   return result;
@@ -362,9 +362,17 @@ bool Car4D_Car1D::dynamics_cell_helper(
         //dx_i.assign(x2_size, 10.);
         dx_i.resize(x2_size);
 
-        const beacls::FloatVec& ds_0 = ds[0];
+        const beacls::FloatVec& ds_0s = ds[0];
+        FLOAT_TYPE ds_0;
+
         for (size_t index = 0; index < x2_size; ++index) {
-          dx_i[index] = x_ites3[index]*std::cos(x_ites2[index]) + ds_0[index];
+          if (ds[0].size() == x2_size) {
+            ds_0 = ds_0s[index];
+          }
+          else {
+            ds_0 = ds_0s[0];
+          }
+          dx_i[index] = x_ites3[index]*std::cos(x_ites2[index]) + ds_0;
         }
       }
       break;
@@ -372,9 +380,17 @@ bool Car4D_Car1D::dynamics_cell_helper(
     case 1: {
       //  dx_i.assign(x2_size, 10.);
         dx_i.resize(x2_size);
-        const beacls::FloatVec& ds_1 = ds[1];
+        const beacls::FloatVec& ds_1s = ds[1];
+        FLOAT_TYPE ds_1;
+
         for (size_t index = 0; index < x2_size; ++index) {
-          dx_i[index] = x_ites3[index]*std::sin(x_ites2[index]) + ds_1[index];
+        	if (ds[1].size() == x2_size) {
+        		ds_1 = ds_1s[index];
+        	}
+        	else {
+        		ds_1 = ds_1s[0];
+        	}
+          dx_i[index] = x_ites3[index]*std::sin(x_ites2[index]) + ds_1;
         }
       }
       break;
@@ -396,9 +412,17 @@ bool Car4D_Car1D::dynamics_cell_helper(
     case 4:{
           //dx_i.assign(x2_size, 10.);
         dx_i.resize(x2_size);
-        const beacls::FloatVec& ds_1 = ds[2];
+        const beacls::FloatVec& ds_2s = ds[0];
+        FLOAT_TYPE ds_2;
+
         for (size_t index = 0; index < x2_size; ++index) {
-        dx_i[index] = ds_1[index];
+        	if (ds[2].size() == x2_size) {
+        		ds_2 = ds_2s[index];
+        	}
+        	else {
+            ds_2 = ds_2s[0];
+        	}
+        dx_i[index] = ds_2;
         }
       }
     default: {
@@ -424,11 +448,9 @@ bool Car4D_Car1D::dynamics(
 
   const size_t src_target_dim2_index = find_val(dims, 2);
   const size_t src_target_dim3_index = find_val(dims, 3);
-  const size_t src_target_dim4_index = find_val(dims, 4);
 
   if ((src_target_dim2_index == dims.size())
-    || (src_target_dim3_index == dims.size())
-    || (src_target_dim4_index == dims.size())) {
+    || (src_target_dim3_index == dims.size())) {
     return false;
   }
 

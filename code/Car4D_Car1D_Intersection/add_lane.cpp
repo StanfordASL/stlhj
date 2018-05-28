@@ -28,15 +28,5 @@ void add_lane(
           [theta_offset](const auto &xs_i, const auto &lane_i) {
             return lane_i - 5.*std::pow((theta_diff(xs_i,theta_offset)/(M_PI)),2); });
           }
-
-        if (enhance == 1){
-          std::transform(xs.cbegin(), xs.cend(), lane.begin(), lane.begin(),
-          [theta_offset](const auto &xs_i, const auto &lane_i) {
-            return (lane_i - 5.*std::pow((theta_diff(xs_i,theta_offset)/(M_PI)),2))*10.; });
-            }
-
-          }
-          else if (dim == 4) {
-
           }
         }

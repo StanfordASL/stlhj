@@ -43,10 +43,10 @@ int main(int argc, char *argv[])
 			(FLOAT_TYPE)(270 * M_PI / 180), (FLOAT_TYPE)15, (FLOAT_TYPE)0};
 
   const beacls::FloatVec
-		gmin{(FLOAT_TYPE)(-20), (FLOAT_TYPE)(-20), (FLOAT_TYPE)0, (FLOAT_TYPE)0, (FLOAT_TYPE)-12};
+		gmin{(FLOAT_TYPE)(-12), (FLOAT_TYPE)(-12), (FLOAT_TYPE)0, (FLOAT_TYPE)0, (FLOAT_TYPE)-12};
 
   const beacls::FloatVec
-    gmax{(FLOAT_TYPE)20, (FLOAT_TYPE)20, (FLOAT_TYPE)(2*M_PI),(FLOAT_TYPE)5,(FLOAT_TYPE)12};
+    gmax{(FLOAT_TYPE)12, (FLOAT_TYPE)12, (FLOAT_TYPE)(2*M_PI),(FLOAT_TYPE)5,(FLOAT_TYPE)12};
 
   levelset::HJI_Grid* g;
   helperOC::Car4D_Car1D* p4D1D = new helperOC::Car4D_Car1D(initState, wMax, arange, dMax);
@@ -98,9 +98,9 @@ int main(int argc, char *argv[])
 		helperOC::HJIPDE_extraArgs extraArgs =
 			def_extraArgs(accel, schemeData->dynSys);
 
-		// std::vector<beacls::FloatVec> alpha_U_beta;
-		// int resultU = until(alpha_U_beta, alpha, beta, tau1, tau2, schemeData, tau,
-		// extraArgs);
+		std::vector<beacls::FloatVec> alpha_U_beta;
+		int resultU = until(alpha_U_beta, alpha, beta, tau1, tau2, schemeData, tau,
+		extraArgs);
 
     // std::vector<beacls::FloatVec> event_beta;
 		// int resultF = eventually(event_beta, beta, tau1, tau2, schemeData, tau,
@@ -117,14 +117,14 @@ int main(int argc, char *argv[])
 		 if (dump_file) {
 		 	beacls::IntegerVec Ns = g->get_Ns();
 		 	g->save_grid(std::string("g"), fs);
-			// if (!alpha_U_beta.empty()) {
-			// 	save_vector_of_vectors(alpha_U_beta, std::string("alpha_U_beta"), Ns,
-			// 		false, fs);
-			// 	}
+			if (!alpha_U_beta.empty()) {
+				save_vector_of_vectors(alpha_U_beta, std::string("alpha_U_beta"), Ns,
+					false, fs);
+				}
 
-			if (!alpha.empty()) {
- 			  save_vector(alpha, std::string("data"), Ns, false, fs);
- 			  }
+			// if (!alpha.empty()) {
+ 			//   save_vector(alpha, std::string("data"), Ns, false, fs);
+ 			//   }
 
 			// if (!beta.empty()) {
 			// 	save_vector(beta, std::string("data"), Ns, false, fs);
