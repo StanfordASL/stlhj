@@ -27,7 +27,7 @@ void add_lane_disturbance(
     beacls::IntegerVec b2y_index;
 
     for (b = 0; b <= b_size-1; ++b) {
-      b2y = (long unsigned int)(by_unit+0.5);
+      b2y = (long unsigned int)(b/by_unit+0.5);
       b2y_index.push_back(b2y);
     }
 

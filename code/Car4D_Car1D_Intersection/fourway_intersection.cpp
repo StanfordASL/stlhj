@@ -217,6 +217,5 @@ void fourway_intersection(
       get_subvector(lane_temp,lane,shape,range,gmin,gmax,dim);
       add_lane_disturbance(lane_temp,shape,range,gmin,gmax,dim);
       update_lane(lane_temp,lane,shape,range,gmin,gmax,dim);
-
     }
   }
