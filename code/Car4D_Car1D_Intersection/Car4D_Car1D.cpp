@@ -7,6 +7,14 @@
 #include <levelset/Grids/HJI_Grid.hpp>
 using namespace helperOC;
 
+/* 
+Need v2Range: cannot use dMax since other vehicle probably has asymmetric speed range
+  - go through file to add it in all appropriate places
+  - look at any place where the class properties are being used
+dMax should just be 2D for now (for disturbance acting on xdot and ydot)
+  - note that number of disturbances is still 3
+  - just need to compute last component of disturbance according to v2Range
+ */
 
 Car4D_Car1D::Car4D_Car1D(
     const beacls::FloatVec& x,
@@ -14,11 +22,10 @@ Car4D_Car1D::Car4D_Car1D(
     const beacls::FloatVec& aRange,
     const beacls::FloatVec& dMax,
     const beacls::IntegerVec& dims):
-    DynSys(dims.size(), 2, 2,
-    beacls::IntegerVec{0, 1}, //!< Position dimensions
-    beacls::IntegerVec{2},  //!< Heading dimensions
-    beacls::IntegerVec{3},  //!< velocity dimensions
-    beacls::IntegerVec{4}),  //!< velocity dimensions (2nd car)
+    DynSys(5, // number of states
+	       2, // number of controls 
+		   3, // number of disturbances
+    ), 
     wMax(wMax), aRange(aRange), dMax(dMax), dims(dims) {
 
   if (x.size() != DynSys::get_nx()) {
