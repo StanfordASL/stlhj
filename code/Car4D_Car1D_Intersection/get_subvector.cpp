@@ -7,8 +7,8 @@ void get_subvector(
   beacls::FloatVec gmax,
   const size_t dim){
 
-    FLOAT_TYPE x_unit = (shape[0]-1)/(gmax[0]-gmin[0]);
-    FLOAT_TYPE y_unit = (shape[1]-1)/(gmax[1]-gmin[1]);
+    FLOAT_TYPE x_unit = (static_cast<float>(shape[0])-1.)/(gmax[0]-gmin[0]);
+    FLOAT_TYPE y_unit = (static_cast<float>(shape[1])-1)/(gmax[1]-gmin[1]);
     long unsigned int x1 = (long unsigned int)(x_unit*(range[0]-gmin[0])+0.5);
     long unsigned int x2 = (long unsigned int)(x_unit*(range[1]-gmin[0])+0.5);
     beacls::IntegerVec x_index{x1,x2};

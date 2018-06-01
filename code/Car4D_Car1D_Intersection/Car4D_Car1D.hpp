@@ -36,6 +36,7 @@ namespace helperOC {
 		FLOAT_TYPE wMax;	//!< Angular control bounds
 		beacls::FloatVec aRange;	//!< Acceleration control bounds
 		beacls::FloatVec dMax;	//!< Disturbance
+		beacls::FloatVec v2Range;	//!< 2nd Car's velocity bounds
 		beacls::IntegerVec dims;	//!< Dimensions that are active
 	public:
 		/*
@@ -52,7 +53,8 @@ namespace helperOC {
 				const beacls::FloatVec& x,
 				const FLOAT_TYPE wMax,
 				const beacls::FloatVec& aRange,
-				const beacls::FloatVec& dMax = beacls::FloatVec{ 0,0,0 },
+				const beacls::FloatVec& dMax = beacls::FloatVec{ 0,0 },
+				const beacls::FloatVec& v2Range = beacls::FloatVec{ 0,0 },
 				const beacls::IntegerVec& dims = beacls::IntegerVec{ 0,1,2,3,4 }
 		);
 		PREFIX_VC_DLL
@@ -174,6 +176,7 @@ namespace helperOC {
 			wMax(rhs.wMax),	//!< Angular control bounds
 			aRange(rhs.aRange),	//!< Acceleration control bounds
 			dMax(rhs.dMax),	//!< Disturbance
+			v2Range(rhs.v2Range),	//!< Disturbance
 			dims(rhs.dims)	//!< Dimensions that are active
 		{}
 		bool dynamics_cell_helper(

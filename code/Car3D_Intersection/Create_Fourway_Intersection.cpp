@@ -77,7 +77,7 @@ int main(int argc, char *argv[])
 
 //!< Plane parameters
 	const FLOAT_TYPE wMax = (FLOAT_TYPE)1;
-	const beacls::FloatVec vrange{ (FLOAT_TYPE)0, (FLOAT_TYPE)5 };
+	const beacls::FloatVec vrange{ (FLOAT_TYPE)0, (FLOAT_TYPE)5 };z
 	const beacls::FloatVec arange{ (FLOAT_TYPE)0, (FLOAT_TYPE)5 }; //may need to be changed if considering acceleration
 	const beacls::FloatVec dMax{ (FLOAT_TYPE)0, (FLOAT_TYPE)0 };
 

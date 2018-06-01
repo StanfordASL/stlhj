@@ -7,7 +7,7 @@
 #include <levelset/Grids/HJI_Grid.hpp>
 using namespace helperOC;
 
-/* 
+/*
 Need v2Range: cannot use dMax since other vehicle probably has asymmetric speed range
   - go through file to add it in all appropriate places
   - look at any place where the class properties are being used
@@ -21,12 +21,13 @@ Car4D_Car1D::Car4D_Car1D(
     const FLOAT_TYPE wMax,
     const beacls::FloatVec& aRange,
     const beacls::FloatVec& dMax,
+    const beacls::FloatVec& v2Range,
     const beacls::IntegerVec& dims):
     DynSys(5, // number of states
-	       2, // number of controls 
-		   3, // number of disturbances
-    ), 
-    wMax(wMax), aRange(aRange), dMax(dMax), dims(dims) {
+	       2, // number of controls
+		   3 // number of disturbances
+    ),
+    wMax(wMax), aRange(aRange), dMax(dMax), v2Range(v2Range), dims(dims) {
 
   if (x.size() != DynSys::get_nx()) {
     std::cerr << "Error: " << __func__ <<
@@ -44,12 +45,14 @@ Car4D_Car1D::Car4D_Car1D(
     wMax(0),
     aRange(beacls::FloatVec()),
     dMax(beacls::FloatVec()),
+    v2Range(beacls::FloatVec()),
     dims(beacls::IntegerVec()) {
 
   beacls::IntegerVec dummy;
   load_value(wMax, std::string("wMax"), true, fs, variable_ptr);
   load_vector(aRange, std::string("aRange"), dummy, true, fs, variable_ptr);
   load_vector(dMax, std::string("dMax"), dummy, true, fs, variable_ptr);
+  load_vector(v2Range, std::string("v2Range"), dummy, true, fs, variable_ptr);
   load_vector(dims, std::string("dims"), dummy, true, fs, variable_ptr);
 }
 
@@ -67,6 +70,11 @@ bool Car4D_Car1D::operator==(const Car4D_Car1D& rhs) const {
 
   else if ((dMax.size() != rhs.dMax.size()) ||
       !std::equal(dMax.cbegin(), dMax.cend(), rhs.dMax.cbegin())) {
+    return false; //!< Disturbance
+  }
+
+  else if ((v2Range.size() != rhs.v2Range.size()) ||
+      !std::equal(v2Range.cbegin(), v2Range.cend(), rhs.v2Range.cbegin())) {
     return false; //!< Disturbance
   }
 
@@ -96,6 +104,11 @@ bool Car4D_Car1D::save(
 
   if (!dMax.empty()) {
     result &= save_vector(dMax, std::string("dMax"), beacls::IntegerVec(),
+      true, fs, variable_ptr);
+  }
+
+  if (!v2Range.empty()) {
+    result &= save_vector(v2Range, std::string("v2Range"), beacls::IntegerVec(),
       true, fs, variable_ptr);
   }
 
@@ -273,17 +286,16 @@ bool Car4D_Car1D::optDstb2_cell_helper(
     if (length == 0 || deriv == NULL) return false;
 
     dOpt2.resize(length);
-    const FLOAT_TYPE dMax2 = dMax[2];
     switch (dMode) {
       case helperOC::DynSys_DMode_Max:
         for (size_t i = 0; i < length; ++i) {
-          dOpt2[i] = (deriv[i] >= 0) ? dMax2 : -dMax2;
+          dOpt2[i] = (deriv[i] >= 0) ? v2Range[1] : v2Range[0];
         }
         break;
 
       case helperOC::DynSys_DMode_Min:
         for (size_t i = 0; i < length; ++i) {
-          dOpt2[i] = (deriv[i] >= 0) ? -dMax2 : dMax2;
+          dOpt2[i] = (deriv[i] >= 0) ? v2Range[0] : v2Range[1];
         }
         break;
 
@@ -432,8 +444,9 @@ bool Car4D_Car1D::dynamics_cell_helper(
         dx_i[index] = ds_2;
         }
       }
+      break;
     default: {
-      std::cerr << "Only dimension 1-4 are defined for dynamics of Car4D_Car1D!"
+      std::cerr << "Only dimension 1-5 are defined for dynamics of Car4D_Car1D!"
       << std::endl;
       result = false;
     }
