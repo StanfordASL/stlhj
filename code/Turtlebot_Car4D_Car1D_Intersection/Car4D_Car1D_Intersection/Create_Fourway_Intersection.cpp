@@ -22,17 +22,19 @@ int main(int argc, char *argv[])
 	if (argc >= 2) {
 		dump_file = (atoi(argv[1]) == 0) ? false : true;
 	}
-
+	// Define tau1 and tau2
+			FLOAT_TYPE tau1 = 0.;
+			FLOAT_TYPE tau2 = 12.;
 //!< Compute reachable set
-	const FLOAT_TYPE tMax = 6;
-	const FLOAT_TYPE dt = 0.5;
+	const FLOAT_TYPE tMax = 12;
+	const FLOAT_TYPE dt = 1.;
 	beacls::FloatVec tau = generateArithmeticSequence<FLOAT_TYPE>(0., dt, tMax);
 
 //!< Plane parameters
-	const FLOAT_TYPE wMax = (FLOAT_TYPE)1;
-	const beacls::FloatVec vrange{ (FLOAT_TYPE)0, (FLOAT_TYPE)6 };
-	const beacls::FloatVec v2range{ (FLOAT_TYPE)-2, (FLOAT_TYPE)-5 };
-	const beacls::FloatVec arange{ (FLOAT_TYPE)0, (FLOAT_TYPE)3 }; //may need to be changed if considering acceleration
+	const FLOAT_TYPE wMax = (FLOAT_TYPE)0.4;
+	const beacls::FloatVec vrange{ (FLOAT_TYPE)0, (FLOAT_TYPE)0.15 };
+	const beacls::FloatVec v2range{ (FLOAT_TYPE)-0.15, (FLOAT_TYPE)-0.05 };
+	const beacls::FloatVec arange{ (FLOAT_TYPE)-0.2, (FLOAT_TYPE)0.2 }; //may need to be changed if considering acceleration
 	const beacls::FloatVec dMax{ (FLOAT_TYPE)0, (FLOAT_TYPE)0 };
 
 	const FLOAT_TYPE inf = std::numeric_limits<FLOAT_TYPE>::infinity();
@@ -44,16 +46,16 @@ int main(int argc, char *argv[])
 			(FLOAT_TYPE)(270 * M_PI / 180), (FLOAT_TYPE)15, (FLOAT_TYPE)0};
 
   const beacls::FloatVec
-		gmin{(FLOAT_TYPE)(-15), (FLOAT_TYPE)(-15), (FLOAT_TYPE)0, (FLOAT_TYPE)-2, (FLOAT_TYPE)-15};
+		gmin{(FLOAT_TYPE)(-0.6), (FLOAT_TYPE)(-0.6), (FLOAT_TYPE)0, (FLOAT_TYPE)-0.02, (FLOAT_TYPE)-0.6};
 
   const beacls::FloatVec
-    gmax{(FLOAT_TYPE)15, (FLOAT_TYPE)15, (FLOAT_TYPE)(2*M_PI),(FLOAT_TYPE)7,(FLOAT_TYPE)15};
+    gmax{(FLOAT_TYPE)0.6, (FLOAT_TYPE)0.6, (FLOAT_TYPE)(2*M_PI),(FLOAT_TYPE)0.17,(FLOAT_TYPE)0.6};
 
   levelset::HJI_Grid* g;
   helperOC::Car4D_Car1D* p4D1D = new helperOC::Car4D_Car1D(initState, wMax, arange, dMax, v2range);
 	if (accel) {
   	g = helperOC::createGrid(gmin, gmax,
-				beacls::IntegerVec{21,21,21,21,21}, pdDim);
+				beacls::IntegerVec{20,20,20,20,20}, pdDim);
 	}
 	else {
 		g = helperOC::createGrid(
@@ -69,9 +71,7 @@ int main(int argc, char *argv[])
   // satisfy beta if tau1 < tau < tau2 (reach beta)
   // satisfy alpha until beta is satisfied
 */
-// Define tau1 and tau2
-		FLOAT_TYPE tau1 = 0.;
-		FLOAT_TYPE tau2 = 6.;
+
 
 // Define alpha and beta
 		int Command;
