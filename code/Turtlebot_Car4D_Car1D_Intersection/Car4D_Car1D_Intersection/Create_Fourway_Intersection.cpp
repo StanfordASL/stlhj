@@ -46,10 +46,10 @@ int main(int argc, char *argv[])
 			(FLOAT_TYPE)(270 * M_PI / 180), (FLOAT_TYPE)15, (FLOAT_TYPE)0};
 
   const beacls::FloatVec
-		gmin{(FLOAT_TYPE)(-0.6), (FLOAT_TYPE)(-0.6), (FLOAT_TYPE)0, (FLOAT_TYPE)-0.02, (FLOAT_TYPE)-0.6};
+		gmin{(FLOAT_TYPE)(-0.8), (FLOAT_TYPE)(-0.8), (FLOAT_TYPE)0, (FLOAT_TYPE)-0.045, (FLOAT_TYPE)-0.8};
 
   const beacls::FloatVec
-    gmax{(FLOAT_TYPE)0.6, (FLOAT_TYPE)0.6, (FLOAT_TYPE)(2*M_PI),(FLOAT_TYPE)0.17,(FLOAT_TYPE)0.6};
+    gmax{(FLOAT_TYPE)0.8, (FLOAT_TYPE)0.8, (FLOAT_TYPE)(2*M_PI),(FLOAT_TYPE)0.195,(FLOAT_TYPE)0.8};
 
   levelset::HJI_Grid* g;
   helperOC::Car4D_Car1D* p4D1D = new helperOC::Car4D_Car1D(initState, wMax, arange, dMax, v2range);
