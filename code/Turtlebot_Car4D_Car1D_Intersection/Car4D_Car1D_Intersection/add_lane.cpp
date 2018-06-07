@@ -26,14 +26,14 @@ void add_lane(
 
         std::transform(xs.cbegin(), xs.cend(), lane.begin(), lane.begin(),
         [theta_offset](const auto &xs_i, const auto &lane_i) {
-          return lane_i - 50.*std::pow((theta_diff(xs_i,theta_offset)/(M_PI)),2); });
+          return lane_i - 5.*std::pow((theta_diff(xs_i,theta_offset)/(M_PI)),2); });
 
         }
 
         else if (dim == 3) {
             for (int i = 0; i <= lane.size()-1; ++i) {
-              if (xs[i]<vrange[0] || xs[i]>vrange[1]){
-                lane[i] = -5.;
+              if (xs[i]>vrange[1]){
+                lane[i] = -1.;
               }
             }
         }

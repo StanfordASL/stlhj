@@ -18,7 +18,7 @@ void add_lane_disturbance(
 
     long unsigned int x_size, y_size, z_size, a_size, b_size, y, z, a, b, b2y, yz_unit;
 
-    FLOAT_TYPE y_add = (y_unit*vehicle_width);
+    FLOAT_TYPE y_add = (y_unit*vehicle_width*0.78);
     // printf("y_unit=%f\n",y_unit);
     // printf("y_add=%f\n",y_add);
     FLOAT_TYPE x_add = (x_unit*vehicle_width);
@@ -57,7 +57,7 @@ void add_lane_disturbance(
           }
           for (y = y_addvec[0]; y <= y_addvec[1]; ++y){
             n = {b*a_size*z_size*y_size*x_size + a*z_size*y_size*x_size + z*y_size*x_size + y*x_size + x_addvec[0], b*a_size*z_size*y_size*x_size + a*z_size*y_size*x_size + z*y_size*x_size + y*x_size + x_addvec[1]};
-            std::fill(lane.begin()+n[0],lane.begin()+n[1],-2.);
+            std::fill(lane.begin()+n[0],lane.begin()+n[1],-5.);
           }
         }
       }

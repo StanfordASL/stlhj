@@ -23,9 +23,9 @@ int main(int argc, char *argv[])
 		dump_file = (atoi(argv[1]) == 0) ? false : true;
 	}
 	// Define tau1 and tau2
-			FLOAT_TYPE tau1 = 0.;
-			FLOAT_TYPE tau2 = 12.;
-//!< Compute reachable set
+	FLOAT_TYPE tau1 = 0.;
+	FLOAT_TYPE tau2 = 12.;
+	//!< Compute reachable set
 	const FLOAT_TYPE tMax = 12;
 	const FLOAT_TYPE dt = 1.;
 	beacls::FloatVec tau = generateArithmeticSequence<FLOAT_TYPE>(0., dt, tMax);
@@ -46,16 +46,16 @@ int main(int argc, char *argv[])
 			(FLOAT_TYPE)(270 * M_PI / 180), (FLOAT_TYPE)15, (FLOAT_TYPE)0};
 
   const beacls::FloatVec
-		gmin{(FLOAT_TYPE)(-0.8), (FLOAT_TYPE)(-0.8), (FLOAT_TYPE)0, (FLOAT_TYPE)-0.045, (FLOAT_TYPE)-0.8};
+		gmin{(FLOAT_TYPE)(-0.6), (FLOAT_TYPE)(-0.6), (FLOAT_TYPE)0, (FLOAT_TYPE)-0.03, (FLOAT_TYPE)-0.6};
 
   const beacls::FloatVec
-    gmax{(FLOAT_TYPE)0.8, (FLOAT_TYPE)0.8, (FLOAT_TYPE)(2*M_PI),(FLOAT_TYPE)0.195,(FLOAT_TYPE)0.8};
+    gmax{(FLOAT_TYPE)0.6, (FLOAT_TYPE)0.6, (FLOAT_TYPE)(2*M_PI),(FLOAT_TYPE)0.17,(FLOAT_TYPE)0.6};
 
   levelset::HJI_Grid* g;
   helperOC::Car4D_Car1D* p4D1D = new helperOC::Car4D_Car1D(initState, wMax, arange, dMax, v2range);
 	if (accel) {
   	g = helperOC::createGrid(gmin, gmax,
-				beacls::IntegerVec{20,20,20,20,20}, pdDim);
+				beacls::IntegerVec{21,21,21,21,21}, pdDim);
 	}
 	else {
 		g = helperOC::createGrid(
@@ -124,7 +124,7 @@ int main(int argc, char *argv[])
 				}
 
 			// if (!alpha.empty()) {
- 			//   save_vector(alpha, std::string("data"), Ns, false, fs);
+ 			//   save_vector(beta, std::string("data"), Ns, false, fs);
  			//   }
 
 			// if (!beta.empty()) {
