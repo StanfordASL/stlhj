@@ -31,9 +31,8 @@ void fourway_intersection(
     lane.assign(numel, -10.);
     //lane_temp.assign(numel, -20.);
     //lane_temp_calc.assign(numel,0.);
-    beacls::FloatVec xs_temp, xs_temp0, xs_temp1, xs_temp2;
+    beacls::FloatVec xs_temp;
     beacls::FloatVec range;
-    beacls::FloatVec theta_range;
     FLOAT_TYPE theta_offset;
     FLOAT_TYPE lane_offset;
     FLOAT_TYPE sq_offset;
@@ -181,79 +180,72 @@ void fourway_intersection(
         }
       }
     }
-    const beacls::FloatVec &xs0 = g->get_xs(0);
-    const beacls::FloatVec &xs1 = g->get_xs(1);
-    const beacls::FloatVec &xs2 = g->get_xs(2);
     for (size_t dim = 0; dim < 5; ++dim) {
       //Assign values for the Intersection Square
-      if (Command==0 && (dim == 0 || dim == 2 || dim == 3 || dim == 4)){ //0-Green; 1-Red
-
+      if (Command==0 && (dim == 0 || dim == 1 || dim == 3 || dim == 4)){ //0-Green; 1-Red
         const beacls::FloatVec &xs = g->get_xs(dim);
-        theta_min = 0.; //right turn
-        theta_max = M_PI*(1/2); //forwards
-        theta_range = {theta_min,theta_max};
+        theta_min = -M_PI/6.; //right turn
+        theta_max = M_PI*(1/2+1/6); //forwards
         range = {0.,0.4,-0.4,0}; //{xmin,xmax,ymin,ymax}
         // if (dim==0){lane_offset = (range[1]+range[0])/2.;}
         // else if (dim==1){lane_offset = (range[3]+range[2])/2.;}
         get_subvector(lane_temp,lane,shape,range,gmin,gmax,dim);
         get_subvector(xs_temp,xs,shape,range,gmin,gmax,dim);
-        if (dim==0 || dim==2){
-          get_subvector(xs_temp0,xs0,shape,range,gmin,gmax,dim);
-          get_subvector(xs_temp1,xs1,shape,range,gmin,gmax,dim);
-          get_subvector(xs_temp2,xs2,shape,range,gmin,gmax,dim);
+        add_lane_plain(lane_temp,xs,dim,vrange,y2range);
+        //add_sq(lane_temp,xs_temp,xg,yg,x0,y0,dim);
+        //lane_temp.assign(lane_temp.size(), 100.);
+        if (dim==3 || dim==4){
+          add_lane(lane_temp,xs_temp,lane_offset,lane_width,theta_offset,vehicle_width,dim,vrange,y2range);
         }
-        add_lane_plain(lane_temp,lane_width,xs_temp,xs_temp0,xs_temp1,xs_temp2,dim,vrange,y2range,theta_range,range);
         update_lane(lane_temp,lane,shape,range,gmin,gmax,dim);
 
-        theta_min = M_PI*(1/2); //forwards
-        theta_max = M_PI*(1); //left turn
-        theta_range = {theta_min,theta_max};
+        theta_min = M_PI*(1/2-1/6); //forwards
+        theta_max = M_PI*(1+1/6); //left turn
         range = {0.,0.4,0.,0.4}; //{xmin,xmax,ymin,ymax}
         // if (dim==0){lane_offset = (range[1]+range[0])/2.;}
         // else if (dim==1){lane_offset = (range[3]+range[2])/2.;}
         get_subvector(lane_temp,lane,shape,range,gmin,gmax,dim);
         get_subvector(xs_temp,xs,shape,range,gmin,gmax,dim);
-        if (dim==0 || dim==2){
-          get_subvector(xs_temp0,xs0,shape,range,gmin,gmax,dim);
-          get_subvector(xs_temp1,xs1,shape,range,gmin,gmax,dim);
-          get_subvector(xs_temp2,xs2,shape,range,gmin,gmax,dim);
+        add_lane_plain(lane_temp,xs,dim,vrange,y2range);
+        //add_sq(lane_temp,xs_temp,xg,yg,x0,y0,dim);
+        //lane_temp.assign(lane_temp.size(), 100.);
+        if (dim==3 || dim==4){
+          add_lane(lane_temp,xs_temp,lane_offset,lane_width,theta_offset,vehicle_width,dim,vrange,y2range);
         }
-        add_lane_plain(lane_temp,lane_width,xs_temp,xs_temp0,xs_temp1,xs_temp2,dim,vrange,y2range,theta_range,range);
         update_lane(lane_temp,lane,shape,range,gmin,gmax,dim);
 
-        theta_min = M_PI*(1); //left turn
-        theta_max = M_PI*(3/2); //backwards
-        theta_range = {theta_min,theta_max};
+        theta_min = M_PI*(1-1/6); //left turn
+        theta_max = M_PI*(3/2+1/6); //backwards
         range = {-0.4,0.,0.,0.4}; //{xmin,xmax,ymin,ymax}
         // if (dim==0){lane_offset = (range[1]+range[0])/2.;}
         // else if (dim==1){lane_offset = (range[3]+range[2])/2.;}
         get_subvector(lane_temp,lane,shape,range,gmin,gmax,dim);
         get_subvector(xs_temp,xs,shape,range,gmin,gmax,dim);
-        if (dim==0 || dim==2){
-          get_subvector(xs_temp0,xs0,shape,range,gmin,gmax,dim);
-          get_subvector(xs_temp1,xs1,shape,range,gmin,gmax,dim);
-          get_subvector(xs_temp2,xs2,shape,range,gmin,gmax,dim);
+        add_lane_plain(lane_temp,xs,dim,vrange,y2range);
+        //add_sq(lane_temp,xs_temp,xg,yg,x0,y0,dim);
+        //lane_temp.assign(lane_temp.size(), 100.);
+        if (dim==3 || dim==4){
+          add_lane(lane_temp,xs_temp,lane_offset,lane_width,theta_offset,vehicle_width,dim,vrange,y2range);
         }
-        add_lane_plain(lane_temp,lane_width,xs_temp,xs_temp0,xs_temp1,xs_temp2,dim,vrange,y2range,theta_range,range);
         update_lane(lane_temp,lane,shape,range,gmin,gmax,dim);
 
-        theta_min = M_PI*(3/2); //backwards
+        theta_min = M_PI*(3/2-1/6); //backwards
         theta_max = 2.*M_PI; //right turn
-        theta_range = {theta_min,theta_max};
         range = {-0.4,0.,-0.4,0.}; //{xmin,xmax,ymin,ymax}
         // if (dim==0){lane_offset = (range[1]+range[0])/2.;}
         // else if (dim==1){lane_offset = (range[3]+range[2])/2.;}
         get_subvector(lane_temp,lane,shape,range,gmin,gmax,dim);
         get_subvector(xs_temp,xs,shape,range,gmin,gmax,dim);
-        if (dim==0 || dim==2){
-          get_subvector(xs_temp0,xs0,shape,range,gmin,gmax,dim);
-          get_subvector(xs_temp1,xs1,shape,range,gmin,gmax,dim);
-          get_subvector(xs_temp2,xs2,shape,range,gmin,gmax,dim);
+        add_lane_plain(lane_temp,xs,dim,vrange,y2range);
+
+        //lane_temp.assign(lane_temp.size(), 100.);
+        //add_sq(lane_temp,xs_temp,xg,yg,x0,y0,dim);
+        if (dim==3 || dim==4){
+          add_lane(lane_temp,xs_temp,lane_offset,lane_width,theta_offset,vehicle_width,dim,vrange,y2range);
         }
-        add_lane_plain(lane_temp,lane_width,xs_temp,xs_temp0,xs_temp1,xs_temp2,dim,vrange,y2range,theta_range,range);
         update_lane(lane_temp,lane,shape,range,gmin,gmax,dim);
 
-        //  Create barriers at the relevant sections of the intersection.
+      //  Create barriers at the relevant sections of the intersection.
         if(dim==3){
           if (Command==0){
             range = {0.4,0.4,0.,0.4};

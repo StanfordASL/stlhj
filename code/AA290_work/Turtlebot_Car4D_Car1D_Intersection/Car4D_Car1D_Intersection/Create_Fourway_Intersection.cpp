@@ -124,7 +124,7 @@ int main(int argc, char *argv[])
 			// 	}
 
 			if (!alpha.empty()) {
- 			  save_vector(alpha, std::string("data"), Ns, false, fs);
+ 			  save_vector(beta, std::string("data"), Ns, false, fs);
 				}
 
 			// if (!beta.empty()) {

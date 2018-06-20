@@ -72,12 +72,12 @@ int main(int argc, char *argv[])
 
 //!< Compute reachable set
 	const FLOAT_TYPE tMax = 3;
-	const FLOAT_TYPE dt = 3./12.;
+	const FLOAT_TYPE dt = 1.;
 	beacls::FloatVec tau = generateArithmeticSequence<FLOAT_TYPE>(0., dt, tMax);
 
 //!< Plane parameters
 	const FLOAT_TYPE wMax = (FLOAT_TYPE)1;
-	const beacls::FloatVec vrange{ (FLOAT_TYPE)0, (FLOAT_TYPE)5 };z
+	const beacls::FloatVec vrange{ (FLOAT_TYPE)0, (FLOAT_TYPE)5 };
 	const beacls::FloatVec arange{ (FLOAT_TYPE)0, (FLOAT_TYPE)5 }; //may need to be changed if considering acceleration
 	const beacls::FloatVec dMax{ (FLOAT_TYPE)0, (FLOAT_TYPE)0 };
 
@@ -91,10 +91,10 @@ int main(int argc, char *argv[])
 
   const beacls::FloatVec
     //gmin{(FLOAT_TYPE)(-8), (FLOAT_TYPE)(-8), (FLOAT_TYPE)0, (FLOAT_TYPE)5};
-		gmin{(FLOAT_TYPE)(-20), (FLOAT_TYPE)(-20), (FLOAT_TYPE)0, (FLOAT_TYPE)5};
+		gmin{(FLOAT_TYPE)(-10), (FLOAT_TYPE)(-30), (FLOAT_TYPE)0, (FLOAT_TYPE)5};
 
   const beacls::FloatVec
-    gmax{(FLOAT_TYPE)20, (FLOAT_TYPE)20, (FLOAT_TYPE)(2*M_PI),(FLOAT_TYPE)25};
+    gmax{(FLOAT_TYPE)30, (FLOAT_TYPE)30, (FLOAT_TYPE)(2*M_PI),(FLOAT_TYPE)25};
 
   levelset::HJI_Grid* g;
   helperOC::Plane* p3D = new helperOC::Plane(
@@ -109,7 +109,7 @@ int main(int argc, char *argv[])
 	else {
 		g = helperOC::createGrid(
 			beacls::FloatVec{gmin[0], gmin[1], gmin[2]},
-			beacls::FloatVec{gmax[0], gmax[1], gmax[2]}, beacls::IntegerVec{120,120,120},
+			beacls::FloatVec{gmax[0], gmax[1], gmax[2]}, beacls::IntegerVec{21,21,21},
 			pdDim);
 		}
 
@@ -203,7 +203,7 @@ int main(int argc, char *argv[])
 				}
 
 			// if (!alpha.empty()) {
- 			//   save_vector(alpha, std::string("data"), Ns, false, fs);
+ 			//   save_vector(beta, std::string("data"), Ns, false, fs);
  			//   }
 
 			// if (!beta.empty()) {

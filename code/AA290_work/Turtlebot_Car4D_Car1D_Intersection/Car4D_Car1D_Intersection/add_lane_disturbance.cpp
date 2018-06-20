@@ -57,7 +57,7 @@ void add_lane_disturbance(
           }
           for (y = y_addvec[0]; y <= y_addvec[1]; ++y){
             n = {b*a_size*z_size*y_size*x_size + a*z_size*y_size*x_size + z*y_size*x_size + y*x_size + x_addvec[0], b*a_size*z_size*y_size*x_size + a*z_size*y_size*x_size + z*y_size*x_size + y*x_size + x_addvec[1]};
-            std::fill(lane.begin()+n[0],lane.begin()+n[1],-10.);
+            std::fill(lane.begin()+n[0],lane.begin()+n[1],-5.);
 }
         }
       }
