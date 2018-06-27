@@ -37,6 +37,8 @@ namespace helperOC {
 		beacls::FloatVec aRange;	//!< Acceleration control bounds
 		beacls::FloatVec dMax;	//!< Disturbance
 		beacls::FloatVec v2Range;	//!< 2nd Car's velocity bounds
+		beacls::FloatVec y2Range;
+		FLOAT_TYPE dt;
 		beacls::IntegerVec dims;	//!< Dimensions that are active
 	public:
 		/*
@@ -55,6 +57,8 @@ namespace helperOC {
 				const beacls::FloatVec& aRange,
 				const beacls::FloatVec& dMax = beacls::FloatVec{ 0,0 },
 				const beacls::FloatVec& v2Range = beacls::FloatVec{ 0,0 },
+				const beacls::FloatVec& y2Range = beacls::FloatVec{ 0,0 },
+				const FLOAT_TYPE dt = (FLOAT_TYPE)0.25,
 				const beacls::IntegerVec& dims = beacls::IntegerVec{ 0,1,2,3,4 }
 		);
 		PREFIX_VC_DLL
@@ -177,12 +181,15 @@ namespace helperOC {
 			aRange(rhs.aRange),	//!< Acceleration control bounds
 			dMax(rhs.dMax),	//!< Disturbance
 			v2Range(rhs.v2Range),	//!< Disturbance
+			y2Range(rhs.y2Range),
+			dt(rhs.dt),
 			dims(rhs.dims)	//!< Dimensions that are active
 		{}
 		bool dynamics_cell_helper(
 			std::vector<beacls::FloatVec >& dxs,
 			const beacls::FloatVec::const_iterator& x_ites2,
 			const beacls::FloatVec::const_iterator& x_ites3,
+			const beacls::FloatVec::const_iterator& x_ites4,
 			const std::vector<beacls::FloatVec >& us,
 			const std::vector<beacls::FloatVec >& ds,
 			const size_t x2_size,

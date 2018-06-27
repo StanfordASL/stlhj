@@ -101,17 +101,17 @@ void fourway_intersection(
 
         if (Command == 1){ //0-Green; 1-Red
 
-          theta_offset = M_PI/2;
-
-          dim_long = 1;
-          range = {0.,0.4,-0.6,-0.4}; //{xmin,xmax,ymin,ymax}
-          dim_long_offset = range[3];
-          lane_offset = (range[1]+range[0])/2.;
-          get_subvector(lane_temp,lane,shape,range,gmin,gmax,dim);
-          get_subvector(xs_temp,xs,shape,range,gmin,gmax,dim);
-          //lane_temp.assign(lane_temp.size(), 10.);
-          add_lane_initial_final(lane_temp,xs_temp,lane_offset,lane_width,theta_offset,vehicle_width,dim_long,dim_long_offset,dim,vrange,y2range,position);
-          update_lane(lane_temp,lane,shape,range,gmin,gmax,dim);
+          // theta_offset = M_PI/2;
+          //
+          // dim_long = 1;
+          // range = {0.,0.4,-0.6,-0.4}; //{xmin,xmax,ymin,ymax}
+          // dim_long_offset = range[3];
+          // lane_offset = (range[1]+range[0])/2.;
+          // get_subvector(lane_temp,lane,shape,range,gmin,gmax,dim);
+          // get_subvector(xs_temp,xs,shape,range,gmin,gmax,dim);
+          // //lane_temp.assign(lane_temp.size(), 10.);
+          // add_lane_initial_final(lane_temp,xs_temp,lane_offset,lane_width,theta_offset,vehicle_width,dim_long,dim_long_offset,dim,vrange,y2range,position);
+          // update_lane(lane_temp,lane,shape,range,gmin,gmax,dim);
 
         }
       }

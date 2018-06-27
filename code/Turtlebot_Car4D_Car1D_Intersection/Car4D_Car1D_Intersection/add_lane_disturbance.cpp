@@ -35,7 +35,7 @@ void add_lane_disturbance(
     FLOAT_TYPE by_unit = static_cast<float>(b_size)/y_size;
     beacls::IntegerVec b2y_index;
     beacls::IntegerVec y_addvec{0,0};
-    beacls::IntegerVec x_addvec{(long unsigned int)((static_cast<float>(x_size)-1.)/2.-x_add/2.-0.5+1),(long unsigned int)((static_cast<float>(x_size)-1.)/2.+x_add/2.+0.5+1)};
+    beacls::IntegerVec x_addvec{(long unsigned int)((static_cast<float>(x_size)-1.)/2.-x_add/2.+0.5),(long unsigned int)((static_cast<float>(x_size)-1.)/2.+x_add/2.+0.5)};
     printf("x_addvec=[%lu,%lu]\n",x_addvec[0],x_addvec[1]);
 
     for (b = 0; b < b_size; ++b) {
@@ -46,7 +46,7 @@ void add_lane_disturbance(
     for (b = 0; b < b_size; ++b) {
       for (a = 0; a < a_size; ++a) {
         for(z = 0; z < z_size; ++z) {
-          y_addvec[0] = (long unsigned int)(b2y_index[b]-y_add/2.-0.5);
+          y_addvec[0] = (long unsigned int)(b2y_index[b]-y_add/2.+0.5);
           y_addvec[1] = (long unsigned int)(b2y_index[b]+y_add/2.+0.5);
 
           if (y_addvec[0]<gmin[1]){

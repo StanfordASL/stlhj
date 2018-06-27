@@ -99,7 +99,7 @@ int main(int argc, char *argv[])
 		helperOC::HJIPDE_extraArgs extraArgs =
 			def_extraArgs(accel, schemeData->dynSys);
 
-		// std::vector<beacls::FloatVec> alpha_U_beta;
+		std::vector<beacls::FloatVec> alpha_U_beta;
 		// int resultU = until(alpha_U_beta, alpha, beta, tau1, tau2, schemeData, tau,
 		// extraArgs);
 
@@ -124,7 +124,7 @@ int main(int argc, char *argv[])
 			// 	}
 
 			if (!alpha.empty()) {
- 			  save_vector(beta, std::string("data"), Ns, false, fs);
+ 			  save_vector(alpha, std::string("data"), Ns, false, fs);
 				}
 
 			// if (!beta.empty()) {

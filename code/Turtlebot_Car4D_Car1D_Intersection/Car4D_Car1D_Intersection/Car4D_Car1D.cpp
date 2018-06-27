@@ -22,12 +22,14 @@ Car4D_Car1D::Car4D_Car1D(
     const beacls::FloatVec& aRange,
     const beacls::FloatVec& dMax,
     const beacls::FloatVec& v2Range,
+    const beacls::FloatVec& y2Range,
+    const FLOAT_TYPE dt,
     const beacls::IntegerVec& dims):
     DynSys(5, // number of states
 	       2, // number of controls
 		   3 // number of disturbances
     ),
-    wMax(wMax), aRange(aRange), dMax(dMax), v2Range(v2Range), dims(dims) {
+    wMax(wMax), aRange(aRange), dMax(dMax), v2Range(v2Range), y2Range(y2Range), dt(dt), dims(dims) {
 
   if (x.size() != DynSys::get_nx()) {
     std::cerr << "Error: " << __func__ <<
@@ -46,6 +48,8 @@ Car4D_Car1D::Car4D_Car1D(
     aRange(beacls::FloatVec()),
     dMax(beacls::FloatVec()),
     v2Range(beacls::FloatVec()),
+    y2Range(beacls::FloatVec()),
+    dt(0),
     dims(beacls::IntegerVec()) {
 
   beacls::IntegerVec dummy;
@@ -53,6 +57,8 @@ Car4D_Car1D::Car4D_Car1D(
   load_vector(aRange, std::string("aRange"), dummy, true, fs, variable_ptr);
   load_vector(dMax, std::string("dMax"), dummy, true, fs, variable_ptr);
   load_vector(v2Range, std::string("v2Range"), dummy, true, fs, variable_ptr);
+  load_vector(y2Range, std::string("y2Range"), dummy, true, fs, variable_ptr);
+  load_value(dt, std::string("dt"), true, fs, variable_ptr);
   load_vector(dims, std::string("dims"), dummy, true, fs, variable_ptr);
 }
 
@@ -77,6 +83,13 @@ bool Car4D_Car1D::operator==(const Car4D_Car1D& rhs) const {
       !std::equal(v2Range.cbegin(), v2Range.cend(), rhs.v2Range.cbegin())) {
     return false; //!< Disturbance
   }
+
+  else if ((y2Range.size() != rhs.y2Range.size()) ||
+      !std::equal(y2Range.cbegin(), y2Range.cend(), rhs.y2Range.cbegin())) {
+    return false; //!< Disturbance
+  }
+
+  else if (dt != rhs.dt) return false;
 
   else if ((dims.size() != rhs.dims.size()) ||
       !std::equal(dims.cbegin(), dims.cend(), rhs.dims.cbegin())) {
@@ -111,6 +124,13 @@ bool Car4D_Car1D::save(
     result &= save_vector(v2Range, std::string("v2Range"), beacls::IntegerVec(),
       true, fs, variable_ptr);
   }
+
+  if (!y2Range.empty()) {
+    result &= save_vector(y2Range, std::string("y2Range"), beacls::IntegerVec(),
+      true, fs, variable_ptr);
+  }
+
+  result &= save_value(dt, std::string("dt"), true, fs, variable_ptr);
 
   if (!dims.empty()) {
     result &= save_vector(dims, std::string("dims"), beacls::IntegerVec(),
@@ -367,6 +387,7 @@ bool Car4D_Car1D::dynamics_cell_helper(
     std::vector<beacls::FloatVec>& dxs,
     const beacls::FloatVec::const_iterator& x_ites2,
     const beacls::FloatVec::const_iterator& x_ites3,
+    const beacls::FloatVec::const_iterator& x_ites4,
     const std::vector<beacls::FloatVec>& us,
     const std::vector<beacls::FloatVec>& ds,
     const size_t x2_size,
@@ -391,7 +412,7 @@ bool Car4D_Car1D::dynamics_cell_helper(
           else {
             ds_0 = ds_0s[0];
           }
-          dx_i[index] = x_ites3[index]*std::cos(x_ites2[index]) + ds_0;
+          dx_i[index] = x_ites3[index]*std::cos(x_ites2[index]);
         }
       }
       break;
@@ -409,7 +430,7 @@ bool Car4D_Car1D::dynamics_cell_helper(
         	else {
         		ds_1 = ds_1s[0];
         	}
-          dx_i[index] = x_ites3[index]*std::sin(x_ites2[index]) + ds_1;
+          dx_i[index] = x_ites3[index]*std::sin(x_ites2[index]);
         }
       }
       break;
@@ -428,20 +449,25 @@ bool Car4D_Car1D::dynamics_cell_helper(
     }
       break;
 
-    case 4:{
-          //dx_i.assign(x2_size, 10.);
+      case 4:{
+        //dx_i.assign(x2_size, 10.);
         dx_i.resize(x2_size);
-        const beacls::FloatVec& ds_2s = ds[0];
+        const beacls::FloatVec& ds_2s = ds[2];
         FLOAT_TYPE ds_2;
 
         for (size_t index = 0; index < x2_size; ++index) {
-        	if (ds[2].size() == x2_size) {
-        		ds_2 = ds_2s[index];
-        	}
-        	else {
+          if (ds[2].size() == x2_size) {
+            ds_2 = ds_2s[index];
+          }
+          else {
             ds_2 = ds_2s[0];
-        	}
-        dx_i[index] = ds_2;
+
+          }
+          if (x_ites4[index] + ds_2*(dt/2.) <= y2Range[0]) {
+            dx_i[index] = 0.;
+          } else {
+            dx_i[index] = ds_2;
+          }
         }
       }
       break;
@@ -468,6 +494,7 @@ bool Car4D_Car1D::dynamics(
 
   const size_t src_target_dim2_index = find_val(dims, 2);
   const size_t src_target_dim3_index = find_val(dims, 3);
+  const size_t src_target_dim4_index = find_val(dims, 4);
 
   if ((src_target_dim2_index == dims.size())
     || (src_target_dim3_index == dims.size())) {
@@ -476,16 +503,17 @@ bool Car4D_Car1D::dynamics(
 
   beacls::FloatVec::const_iterator x_ites2 = x_ites[src_target_dim2_index];
   beacls::FloatVec::const_iterator x_ites3 = x_ites[src_target_dim3_index];
+  beacls::FloatVec::const_iterator x_ites4 = x_ites[src_target_dim4_index];
   bool result = true;
   if (dst_target_dim == std::numeric_limits<size_t>::max()) {
     for (size_t dim = 0; dim < dims.size(); ++dim) {
-      result &= dynamics_cell_helper(dx, x_ites2, x_ites3, us, ds,
+      result &= dynamics_cell_helper(dx, x_ites2, x_ites3, x_ites4, us, ds,
         x_sizes[src_target_dim2_index], x_sizes[src_target_dim3_index], dim);
     }
   }
   else {
     if (dst_target_dim < dims.size())
-      result &= dynamics_cell_helper(dx, x_ites2, x_ites3, us, ds,
+      result &= dynamics_cell_helper(dx, x_ites2, x_ites3, x_ites4, us, ds,
         x_sizes[src_target_dim2_index], x_sizes[src_target_dim3_index],
         dst_target_dim);
     else {
