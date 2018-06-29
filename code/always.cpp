@@ -7,7 +7,6 @@ int always(
     beacls::FloatVec tau,
     helperOC::HJIPDE_extraArgs extraArgs){
 
-// NOT DONE! MINIMALLY MODIFIED FROM until.cpp
 const FLOAT_TYPE small = 1e-3;
 const size_t numel = schemeData->get_grid()->get_numel();
 
@@ -15,7 +14,7 @@ const size_t numel = schemeData->get_grid()->get_numel();
   for (size_t i = 0; i < tau.size(); ++i) {
     targets[i].assign(numel, 100.);
     if (tau[i] > tau1 - small && tau[i] < tau2 + small) { 
-      // satisfy beta if tau1 < tau < tau2
+      // avoid alpha if tau1 < tau < tau2
      std::copy(alpha.begin(), alpha.end(), targets[i].begin());
     }
   }
