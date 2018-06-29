@@ -175,7 +175,7 @@ endif
 vpath %.cpp .
 
 INCLUDE  = -I$(INSTALL_DIR)/includes
-TARGET   = Create_Fourway_Intersection
+TARGET   = Car_test
 OBJDIR   = ./obj
 ifeq "$(strip $(OBJDIR))" ""
   OBJDIR = .
