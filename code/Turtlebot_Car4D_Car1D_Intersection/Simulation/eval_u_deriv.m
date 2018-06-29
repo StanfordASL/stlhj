@@ -1,8 +1,13 @@
-function [u,Vq_V,Vq_th] = eval_u(state,g,deriv_th,deriv_V,t_step,value)
+function [u,Vq_V,Vq_th] = eval_u_deriv(state,g,deriv_th,deriv_V,deriv_V_R,deriv_V_L,t_step,value)
 u = zeros(2,1);
-val_threshold = 0;
+
+vrange = [0,0.15]; %range of acceptable velocities
 w_mat = [-0.4,0.4]; %range of allowable turning rate
 a_mat = [-0.2,0.2]; %range of allowable acceleration
+v_mat = linspace(g.min(4),g.max(4),g.N(4));
+v_thresh_min = min(v_mat(v_mat>=vrange(1)));
+v_thresh_max = max(v_mat(v_mat<=vrange(2)));
+
 th_eps = 0;%0.02; %deviation of values from 0 that do not warrant a change in steering angle (u=0)
 V_eps = 0;
 
@@ -15,7 +20,14 @@ V_eps = 0;
 
 Vq_th = interpn(xd,yd,thd,Vd,y2d,deriv_th,xq,yq,thq,Vq,y2q);
 
-Vq_V = interpn(xd,yd,thd,Vd,y2d,deriv_V,xq,yq,thq,Vq,y2q);
+if Vq>=vrange(1) && Vq<=v_thresh_min
+    Vq_V = interpn(xd,yd,thd,Vd,y2d,deriv_V_R,xq,yq,thq,Vq,y2q);
+elseif Vq<=vrange(2) && Vq>=v_thresh_max
+    Vq_V = interpn(xd,yd,thd,Vd,y2d,deriv_V_L,xq,yq,thq,Vq,y2q);
+else
+    Vq_V = interpn(xd,yd,thd,Vd,y2d,deriv_V,xq,yq,thq,Vq,y2q);
+end
+
 
 if Vq_th>=-th_eps && Vq_th<=th_eps
     u(1) = 0;
@@ -48,6 +60,7 @@ elseif Vq_V>=0
         u(2) = max(a_mat);
     end
 end
+
 
 % if value <= val_threshold
 %     u(1:2) = 0;
