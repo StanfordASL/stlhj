@@ -406,30 +406,18 @@ bool Car4D_Car1D::dynamics_cell_helper(
         FLOAT_TYPE ds_0;
 
         for (size_t index = 0; index < x2_size; ++index) {
-          if (ds[0].size() == x2_size) {
-            ds_0 = ds_0s[index];
-          }
-          else {
-            ds_0 = ds_0s[0];
-          }
-          dx_i[index] = (x_ites3[index]+0.05)*std::cos(x_ites2[index]);
+          dx_i[index] = (x_ites3[index]+0.01)*std::cos(x_ites2[index]);
         }
       }
       break;
 
-    case 1: {
-      //  dx_i.assign(x2_size, 10.);
+      case 1: {
+        //  dx_i.assign(x2_size, 10.);
         dx_i.resize(x2_size);
         const beacls::FloatVec& ds_1s = ds[1];
         FLOAT_TYPE ds_1;
 
         for (size_t index = 0; index < x2_size; ++index) {
-        	if (ds[1].size() == x2_size) {
-        		ds_1 = ds_1s[index];
-        	}
-        	else {
-        		ds_1 = ds_1s[0];
-        	}
           dx_i[index] = x_ites3[index]*std::sin(x_ites2[index]);
         }
       }
@@ -463,7 +451,7 @@ bool Car4D_Car1D::dynamics_cell_helper(
             ds_2 = ds_2s[0];
 
           }
-          if (x_ites4[index] + ds_2*(dt/2.) >= y2Range[1]) {
+          if (x_ites4[index] + 0.2*(dt) > 0.8) {//y2Range[1]) {
             dx_i[index] = 0.;
           } else {
             dx_i[index] = ds_2;

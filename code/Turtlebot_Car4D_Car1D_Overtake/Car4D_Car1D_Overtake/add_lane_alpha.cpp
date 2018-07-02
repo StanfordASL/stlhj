@@ -1,4 +1,4 @@
-void add_lane_beta_1(
+void add_lane_alpha(
   beacls::FloatVec& lane,
   beacls::FloatVec xs,
   FLOAT_TYPE lane_offset,
@@ -15,10 +15,7 @@ void add_lane_beta_1(
 
     if (dim == 0){
       //reset the default values
-      std::fill(lane.begin(),lane.end(),0.);
-      std::transform(xs.cbegin(), xs.cend(), lane.begin(), lane.begin(),
-      [lane_offset, lane_width, vehicle_width, enhance](const auto &xs_i, const auto &lane_i) {
-        return lane_i + enhance*(1-std::pow(((xs_i - lane_offset)/((lane_width-vehicle_width)/2.)),2)); });
+      std::fill(lane.begin(),lane.end(),2.);
 
       } else if (dim == 1) {
         // std::transform(xs.cbegin(), xs.cend(), lane.begin(), lane.begin(),

@@ -25,21 +25,19 @@ int main(int argc, char *argv[])
 		dump_file = (atoi(argv[1]) == 0) ? false : true;
 	}
 
-	//!< Compute reachable set
-	FLOAT_TYPE tMax = 2.;
-	const FLOAT_TYPE dt = 0.25;
-	beacls::FloatVec tau = generateArithmeticSequence<FLOAT_TYPE>(0., dt, tMax);
+
 
 	//!< Plane parameters
-	const FLOAT_TYPE wMax = (FLOAT_TYPE)0.4;
-	const beacls::FloatVec vrange{ (FLOAT_TYPE)0., (FLOAT_TYPE)0.10 };
-	const beacls::FloatVec v2range{ (FLOAT_TYPE)-0.10, (FLOAT_TYPE)0. };
-	const beacls::FloatVec y2range{ (FLOAT_TYPE)0., (FLOAT_TYPE)1.};
+	const FLOAT_TYPE wMax = (FLOAT_TYPE)1.;
+	const beacls::FloatVec thetarange{ (FLOAT_TYPE)M_PI/8., (FLOAT_TYPE)7.*M_PI/8.};
+	const beacls::FloatVec vrange{ (FLOAT_TYPE)0., (FLOAT_TYPE)0.09 };
+	const beacls::FloatVec v2range{ (FLOAT_TYPE)0.15, (FLOAT_TYPE)0.2 };
+	const beacls::FloatVec y2range{ (FLOAT_TYPE)-.6, (FLOAT_TYPE).8};
 	const beacls::FloatVec arange{ (FLOAT_TYPE)-0.2, (FLOAT_TYPE)0.2 }; //may need to be changed if considering acceleration
 	const beacls::FloatVec dMax{ (FLOAT_TYPE)0, (FLOAT_TYPE)0 };
 
 	const FLOAT_TYPE inf = std::numeric_limits<FLOAT_TYPE>::infinity();
-	const beacls::IntegerVec pdDim{2};
+	const beacls::IntegerVec pdDim{};
 
 	// Grid Target and obstacle
 	bool accel = true;
@@ -47,17 +45,17 @@ int main(int argc, char *argv[])
 		(FLOAT_TYPE)(270 * M_PI / 180), (FLOAT_TYPE)0, (FLOAT_TYPE)0};
 
 		const beacls::FloatVec
-		gmin{(FLOAT_TYPE)(-1.), (FLOAT_TYPE)(-0.5), (FLOAT_TYPE)0, (FLOAT_TYPE)-0.125, (FLOAT_TYPE)-0.5};
+		gmin{(FLOAT_TYPE)(-0.4), (FLOAT_TYPE)(-0.8), (FLOAT_TYPE)0., (FLOAT_TYPE)-0.02, (FLOAT_TYPE)-0.8};
 
 		const beacls::FloatVec
-		gmax{(FLOAT_TYPE)1., (FLOAT_TYPE)2.5, (FLOAT_TYPE)(2*M_PI),(FLOAT_TYPE)0.175,(FLOAT_TYPE)2.5};
+		gmax{(FLOAT_TYPE)0.4, (FLOAT_TYPE)1., (FLOAT_TYPE)(M_PI),(FLOAT_TYPE)0.11,(FLOAT_TYPE)1.};
 
 		levelset::HJI_Grid* g;
-		helperOC::Car4D_Car1D* p4D1D = new helperOC::Car4D_Car1D(initState, wMax, arange, dMax, v2range, y2range, dt);
+
 		if (accel) {
 			g = helperOC::createGrid(gmin, gmax,
 				//beacls::IntegerVec{21,21,21,21,21}, pdDim);
-				beacls::IntegerVec{5,5,5,5,5}, pdDim);
+				beacls::IntegerVec{17,19,9,14,19}, pdDim);
 			}
 			else {
 				g = helperOC::createGrid(
@@ -76,98 +74,111 @@ int main(int argc, char *argv[])
 
 
 				// Define alpha and beta
+				beacls::IntegerVec Command_set {0,1,2,3}; //0-alpha1(Eventually); 1-alpha2; 2-beta1; 3-beta2
+				beacls::FloatVec alpha_1, beta_1, alpha_2, beta_2;
 				int Command;
 
-				beacls::FloatVec alpha;
-				//alpha.assign(numel, -12.);
-				Command = 0; // 0-Go straight; 1-Turn left
-				fourway_intersection(alpha,g,gmin,gmax,vrange,y2range,Command);
+				Command = Command_set[0]; //0-alpha1(Eventually); 1-alpha2; 2-beta1; 3-beta2
+				fourway_intersection(alpha_1,g,gmin,gmax,thetarange,vrange,y2range,Command);
+				Command = Command_set[1]; //0-alpha1(Eventually); 1-alpha2; 2-beta1; 3-beta2
+				fourway_intersection(alpha_2,g,gmin,gmax,thetarange,vrange,y2range,Command);
+				Command = Command_set[2]; //0-alpha1(Eventually); 1-alpha2; 2-beta1; 3-beta2
+				fourway_intersection(beta_1,g,gmin,gmax,thetarange,vrange,y2range,Command);
+				Command = Command_set[3]; //0-alpha1(Eventually); 1-alpha2; 2-beta1; 3-beta2
+				fourway_intersection(beta_2,g,gmin,gmax,thetarange,vrange,y2range,Command);
 
-				beacls::FloatVec beta;
-				//beta.assign(numel, -12.);
-				Command = 1; // 0-Go straight; 1-Turn left
-				fourway_intersection(beta,g,gmin,gmax,vrange,y2range,Command);
+				FLOAT_TYPE tau1, tau2, tMax, dt;
+				std::vector<beacls::FloatVec> event_beta, always_alpha, alpha_U_beta;
+				// // Define tau for Eventually
 
-
-				// helperOC::HJIPDE_extraArgs extraArgs;
-
-				// Target set and visualization
-				//extraArgs.visualize = true;
-
-				std::vector<beacls::FloatVec> alpha_U_beta;
-				// int resultU = until(alpha_U_beta, alpha, beta, tau1, tau2, schemeData, tau,
-				// extraArgs);
-
-				// Define tau1 and tau2
-				FLOAT_TYPE tau1 = 0.;
-				FLOAT_TYPE tau2 = 2.;
-
-				helperOC::DynSysSchemeData* schemeData = new helperOC::DynSysSchemeData;
-				schemeData->set_grid(g);
-				schemeData->dynSys = p4D1D;
-				helperOC::HJIPDE_extraArgs extraArgs = def_extraArgs(accel, schemeData->dynSys);
-
-				std::vector<beacls::FloatVec> event_beta;
-				//int resultF = eventually(event_beta, beta, tau1, tau2, schemeData, tau, extraArgs);
-				std::vector<beacls::FloatVec> always_alpha;
-				int resultF = always(event_beta, beta, tau1, tau2, schemeData, tau, extraArgs);
+					tau1 = 0.;
+					tau2 = 15.;
+					tMax = 15.;
+					dt = 0.25;
+					beacls::FloatVec tau = generateArithmeticSequence<FLOAT_TYPE>(0., dt, tMax);
+					helperOC::Car4D_Car1D* p4D1D = new helperOC::Car4D_Car1D(initState, wMax, arange, dMax, v2range, y2range, dt);
+					helperOC::DynSysSchemeData* schemeData = new helperOC::DynSysSchemeData;
+					schemeData->set_grid(g);
+					schemeData->dynSys = p4D1D;
+					helperOC::HJIPDE_extraArgs extraArgs = def_extraArgs(accel, schemeData->dynSys);
+					int resultF = until(event_beta, alpha_1, beta_1, tau1, tau2, schemeData, tau, extraArgs);
 
 
+					tau1 = 0.;
+					tau2 = 20.;
+					tMax = 20.;
+					beacls::FloatVec tau_2 = generateArithmeticSequence<FLOAT_TYPE>(0., dt, tMax);
+					helperOC::Car4D_Car1D* p4D1D_2 = new helperOC::Car4D_Car1D(initState, wMax, arange, dMax, v2range, y2range, dt);
+					helperOC::DynSysSchemeData* schemeData_2 = new helperOC::DynSysSchemeData;
+					schemeData_2->set_grid(g);
+					schemeData_2->dynSys = p4D1D_2;
+					helperOC::HJIPDE_extraArgs extraArgs_2 = def_extraArgs(accel, schemeData_2->dynSys);
+					int resultG = always(always_alpha, event_beta[event_beta.size()-1], tau1, tau2, schemeData_2, tau_2, extraArgs_2);
 
-				// // Define tau1 and tau2
-				// tau1 = 0.;
-				// tau2 = 2.;
-				//
-				// //!< Compute reachable set
-				// tMax = 2.;
-				// beacls::FloatVec tau_2 = generateArithmeticSequence<FLOAT_TYPE>(0., dt, tMax);
-				//
-				// helperOC::Car4D_Car1D* p4D1D_2 = new helperOC::Car4D_Car1D(initState, wMax, arange, dMax, v2range, y2range, dt);
-				// schemeData_2->dynSys = p4D1D_2;
-				//
-				// helperOC::HJIPDE_extraArgs extraArgs_2 = def_extraArgs(accel, schemeData_2->dynSys);
-				printf("size of event_beta.size(): %lu\n",event_beta[event_beta.size()-1].size());
-				printf("size of beta.size(): %lu\n",beta.size());
-				// std::vector<beacls::FloatVec> always_alpha;
-				// int resultU = until(always_alpha, event_beta[event_beta.size()-1], event_beta[event_beta.size()-1], tau1, tau2, schemeData_2, tau_2,
-				// extraArgs_2);
-				// int resultG = always(always_alpha, event_beta[event_beta.size()-1], tau1, tau2, schemeData_2, tau_2,
-				// extraArgs_2);
+
+					tau1 = 0.;
+					tau2 = 20.;
+					tMax = 20.;
+					dt = 0.25;
+					beacls::FloatVec tau_3 = generateArithmeticSequence<FLOAT_TYPE>(0., dt, tMax);
+					helperOC::Car4D_Car1D* p4D1D_3 = new helperOC::Car4D_Car1D(initState, wMax, arange, dMax, v2range, y2range, dt);
+					helperOC::DynSysSchemeData* schemeData_3 = new helperOC::DynSysSchemeData;
+					schemeData_3->set_grid(g);
+					schemeData_3->dynSys = p4D1D_3;
+					helperOC::HJIPDE_extraArgs extraArgs_3 = def_extraArgs(accel, schemeData->dynSys);
+					int resultU = until(alpha_U_beta, alpha_2, beta_2, tau1, tau2, schemeData_3, tau_3, extraArgs_3);
+
+
+
 
 				// save mat file
-				std::string Car_test_filename("alpha.mat");
+				std::string Car_test_filename("overtake_output.mat");
 				beacls::MatFStream* fs = beacls::openMatFStream(Car_test_filename, beacls::MatOpenMode_Write);
 				printf("always_alpha.size():%lu\n",always_alpha.size());
 				if (dump_file) {
 					beacls::IntegerVec Ns = g->get_Ns();
 					g->save_grid(std::string("g"), fs);
-					// if (!alpha_U_beta.empty()) {
-					// 	save_vector_of_vectors(alpha_U_beta, std::string("alpha_U_beta"), Ns,
-					// 		false, fs);
-					// 	}
 
-					// if (!event_beta.empty()) {
-					// 	save_vector_of_vectors(event_beta, std::string("event_beta"), Ns,
-					// 	false, fs);
-					// }
-					printf("is always_alpha empty?:%i\n",!always_alpha.empty());
+					if (!event_beta.empty()) {
+						save_vector_of_vectors(event_beta, std::string("event_beta"), Ns,
+							false, fs);
+						}
+
+					if (!alpha_U_beta.empty()) {
+						save_vector_of_vectors(alpha_U_beta, std::string("alpha_U_beta"), Ns,
+							false, fs);
+						}
+
+
 					if (!always_alpha.empty()) {
 						save_vector_of_vectors(always_alpha, std::string("always_alpha"), Ns,
-						false, fs);
-					}
+							false, fs);
+						}
 
-					// if (!alpha.empty()) {
-					//   save_vector(beta, std::string("data"), Ns, false, fs);
-					// 	}
+					if (!alpha_1.empty()) {
+						save_vector(alpha_1, std::string("alpha_1"), Ns, false, fs);
+						}
 
-					// if (!beta.empty()) {
-					// 	save_vector(beta, std::string("data"), Ns, false, fs);
-					// 	}
+					if (!beta_1.empty()) {
+					  save_vector(beta_1, std::string("beta_1"), Ns, false, fs);
+						}
+
+					if (!alpha_2.empty()) {
+						save_vector(alpha_2, std::string("alpha_2"), Ns, false, fs);
+						}
+
+					if (!beta_2.empty()) {
+					  save_vector(beta_2, std::string("beta_2"), Ns, false, fs);
+						}
 				}
 				beacls::closeMatFStream(fs);
 
 				if (schemeData) delete schemeData;
+				if (schemeData_2) delete schemeData_2;
+				if (schemeData_3) delete schemeData_3;
 				if (p4D1D) delete p4D1D;
+				if (p4D1D_2) delete p4D1D_2;
+				if (p4D1D_3) delete p4D1D_3;
 				if (g) delete g;
 				return 0;
 			}

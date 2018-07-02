@@ -1,5 +1,5 @@
 int always(
-    std::vector<beacls::FloatVec> datas,
+    std::vector<beacls::FloatVec>& datas,
     beacls::FloatVec alpha,
     FLOAT_TYPE tau1,
     FLOAT_TYPE tau2,
