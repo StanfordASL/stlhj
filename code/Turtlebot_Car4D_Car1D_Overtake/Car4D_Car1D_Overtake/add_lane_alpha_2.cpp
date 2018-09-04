@@ -1,4 +1,4 @@
-void add_lane_alpha(
+void add_lane_alpha_2(
   beacls::FloatVec& lane,
   beacls::FloatVec xs,
   FLOAT_TYPE lane_offset,
@@ -8,14 +8,15 @@ void add_lane_alpha(
   size_t dim,
   beacls::FloatVec thetarange,
   beacls::FloatVec vrange,
-  beacls::FloatVec y2range){
+  beacls::FloatVec y2range,
+  FLOAT_TYPE fill_value){
 
     FLOAT_TYPE enhance;
-    enhance = 2.;
+    enhance = 3.;
 
     if (dim == 0){
       //reset the default values
-      std::fill(lane.begin(),lane.end(),2.);
+      std::fill(lane.begin(),lane.end(),fill_value);
 
       } else if (dim == 1) {
         // std::transform(xs.cbegin(), xs.cend(), lane.begin(), lane.begin(),
@@ -25,7 +26,7 @@ void add_lane_alpha(
         } else if (dim == 2) {
           // std::transform(xs.cbegin(), xs.cend(), lane.begin(), lane.begin(),
           // [theta_offset,enhance](const auto &xs_i, const auto &lane_i) {
-          //   return (lane_i - std::pow((theta_diff(xs_i,theta_offset)/(M_PI)),2)); });
+          //   return lane_i+0.5*(1-std::pow((theta_diff(xs_i,theta_offset)/(5./18.*M_PI)),2)); });
 
             for (int i = 0; i <= lane.size()-1; ++i) {
               if (xs[i]<thetarange[0]-0.0001 || xs[i]>thetarange[1]+0.0001){

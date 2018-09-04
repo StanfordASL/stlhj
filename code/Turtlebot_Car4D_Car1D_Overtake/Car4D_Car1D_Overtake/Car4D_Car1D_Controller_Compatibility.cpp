@@ -418,7 +418,7 @@ bool Car4D_Car1D::dynamics_cell_helper(
         FLOAT_TYPE ds_1;
 
         for (size_t index = 0; index < x2_size; ++index) {
-          dx_i[index] = x_ites3[index]*std::sin(x_ites2[index])-0.01;
+          dx_i[index] = x_ites3[index]*std::sin(x_ites2[index]) - 0.01;
         }
       }
       break;
@@ -451,7 +451,7 @@ bool Car4D_Car1D::dynamics_cell_helper(
             ds_2 = ds_2s[0];
 
           }
-          if (x_ites4[index] > 0.7) {//y2Range[1]) {
+          if (x_ites4[index] + 0.2*(dt) > 0.8) {//y2Range[1]) {
             dx_i[index] = 0.;
           } else {
             dx_i[index] = ds_2;

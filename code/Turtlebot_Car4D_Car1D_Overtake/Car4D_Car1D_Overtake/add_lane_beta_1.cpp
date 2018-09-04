@@ -32,19 +32,19 @@ void add_lane_beta_1(
 
             for (int i = 0; i <= lane.size()-1; ++i) {
               if (xs[i]<thetarange[0]-0.0001 || xs[i]>thetarange[1]+0.0001){
-                lane[i] = -10.;
+                lane[i] = -3.;
               }
             }
           } else if (dim == 3) {
             for (int i = 0; i <= lane.size()-1; ++i) {
-              if (xs[i]<vrange[0] || xs[i]>vrange[1]){
-                lane[i] = -10.;
+              if (xs[i]<vrange[0]-0.0001 || xs[i]>vrange[1]+0.0001){
+                lane[i] = -3.;
               }
             }
           } else if (dim == 4) {
             for (int i = 0; i <= lane.size()-1; ++i) {
-              if (xs[i]<y2range[0] || xs[i]>y2range[1]){
-                lane[i] = -10.;}
+              if (xs[i]<y2range[0]-0.0001 || xs[i]>y2range[1]+0.0001){
+                lane[i] = -3.;}
 
               }
             }

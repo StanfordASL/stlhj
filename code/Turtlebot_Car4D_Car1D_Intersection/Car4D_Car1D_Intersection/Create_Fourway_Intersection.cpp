@@ -101,8 +101,8 @@ int main(int argc, char *argv[])
 			def_extraArgs(accel, schemeData->dynSys);
 
 		std::vector<beacls::FloatVec> alpha_U_beta;
-		int resultU = until(alpha_U_beta, alpha, beta, tau1, tau2, schemeData, tau,
-		extraArgs);
+		// int resultU = until(alpha_U_beta, alpha, beta, tau1, tau2, schemeData, tau,
+		// extraArgs);
 
     // std::vector<beacls::FloatVec> event_beta;
 		// int resultF = eventually(event_beta, beta, tau1, tau2, schemeData, tau,
@@ -119,18 +119,18 @@ int main(int argc, char *argv[])
 		 if (dump_file) {
 		 	beacls::IntegerVec Ns = g->get_Ns();
 		 	g->save_grid(std::string("g"), fs);
-			if (!alpha_U_beta.empty()) {
-				save_vector_of_vectors(alpha_U_beta, std::string("alpha_U_beta"), Ns,
-					false, fs);
-				}
+			// if (!alpha_U_beta.empty()) {
+			// 	save_vector_of_vectors(alpha_U_beta, std::string("alpha_U_beta"), Ns,
+			// 		false, fs);
+			// 	}
 
 			// if (!alpha.empty()) {
  			//   save_vector(alpha, std::string("data"), Ns, false, fs);
 			// 	}
 
-			// if (!beta.empty()) {
-			// 	save_vector(beta, std::string("data"), Ns, false, fs);
-			// 	}
+			if (!beta.empty()) {
+				save_vector(beta, std::string("data"), Ns, false, fs);
+				}
 		}
 	  	beacls::closeMatFStream(fs);
 

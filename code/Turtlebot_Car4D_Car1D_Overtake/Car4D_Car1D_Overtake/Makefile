@@ -175,13 +175,13 @@ endif
 vpath %.cpp .
 
 INCLUDE  = -I$(INSTALL_DIR)/includes
-TARGET   = Create_Fourway_Intersection
+TARGET   = Create_TwoLane_Highway
 OBJDIR   = ./obj
 ifeq "$(strip $(OBJDIR))" ""
   OBJDIR = .
 endif
 
-SOURCES  = $(TARGET:=.cpp)
+SOURCES  = $(TARGET:=.cpp) Car4D_Car1D.cpp Car4D_Car1D_mod.cpp
 OBJECTS  = $(SOURCES:.cpp=.o)
 
 ifeq ($(UNAME),Darwin)

@@ -1,4 +1,4 @@
-void add_lane_beta_2top(
+void add_lane_beta_2bot(
   beacls::FloatVec& lane,
   beacls::FloatVec xs,
   FLOAT_TYPE lane_offset,
@@ -18,14 +18,14 @@ void add_lane_beta_2top(
       std::fill(lane.begin(),lane.end(),0.);
       std::transform(xs.cbegin(), xs.cend(), lane.begin(), lane.begin(),
       [lane_offset, lane_width, vehicle_width, enhance](const auto &xs_i, const auto &lane_i) {
-        return enhance*(1-std::pow(((xs_i - lane_offset)/((lane_width-vehicle_width)/2.)),2)); });
+        return enhance*(1-std::pow(((xs_i - lane_offset)/((lane_width-vehicle_width)/2.)),4)); });
 
       } else if (dim == 1) {
         beacls::FloatVec lane_temp = lane;
 
         std::transform(xs.cbegin(), xs.cend(), lane.begin(), lane.begin(),
         [lane_width, vehicle_width, enhance](const auto &xs_i, const auto &lane_i) {
-          return lane_i*(1-std::pow((xs_i - .8)/1.7,2)); });
+          return lane_i*(1-std::pow((xs_i + .6)/1.,2)); });
 
         // std::transform(lane_temp.cbegin(), lane_temp.cend(), lane.begin(), lane.begin(),
         // [lane_width, vehicle_width, enhance](const auto &lane_temp_i, const auto &lane_i) {
@@ -38,19 +38,19 @@ void add_lane_beta_2top(
 
             for (int i = 0; i <= lane.size()-1; ++i) {
               if (xs[i]<thetarange[0]-0.0001 || xs[i]>thetarange[1]+0.0001){
-                lane[i] = -10.;
+                lane[i] = -3.;
               }
             }
           } else if (dim == 3) {
             for (int i = 0; i <= lane.size()-1; ++i) {
-              if (xs[i]<vrange[0] || xs[i]>vrange[1]){
-                lane[i] = -10.;
+              if (xs[i]<vrange[0]-0.0001 || xs[i]>vrange[1]+0.0001){
+                lane[i] = -3.;
               }
             }
           } else if (dim == 4) {
             for (int i = 0; i <= lane.size()-1; ++i) {
-              if (xs[i]<y2range[0] || xs[i]>y2range[1]){
-                lane[i] = -10.;}
+              if (xs[i]<y2range[0]-0.0001 || xs[i]>y2range[1]+0.0001){
+                lane[i] = -3.;}
 
               }
             }

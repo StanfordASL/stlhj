@@ -33,3 +33,9 @@
 
 %% theta_diff.cpp %%
 - finds the minimum d_theta between the 2 input angles.
+
+
+
+
+Installation
+- In the Makefiles, make sure that the installation directories of the dependencies are correct (e.g. NVCC, INSTALL_DIR, MATIO_DIR)
