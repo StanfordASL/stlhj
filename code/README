@@ -1,26 +1,35 @@
 %% Installation %%
-- The HJ Reachability computation uses the beacls C++ toolbox, which can be found here: https://github.com/HJReachability/beacls/tree/master/sources
-- In the Makefiles, make sure that the installation directories of the dependencies are correct (e.g. NVCC, INSTALL_DIR, MATIO_DIR)
-- Currently the STL formulations are not compatible with the CUDA option.
+1. HJ Reachability Computation (C++):
+   - The computation uses the beacls C++ toolbox, which can be found here: https://github.com/HJReachability/beacls/tree/master/sources
+   - In the Makefiles, make sure that the installation directories of the dependencies are correct (e.g. NVCC, INSTALL_DIR, MATIO_DIR)
+   - Currently, the STL formulations are not compatible with the CUDA option.
+
+2. Numerical Simulations (Matlab):
+   -  
+   -
+
+3. Hardware Experiments (ROS, Python, Matlab):
+   -
+   -
 
 %% Folders %%
-- Turtlebot_Car4D_Car1D_Intersection: 
-  - Traffic light intersection example as described in WAFR 2018 submission: http://asl/wp-content/papercite-data/pdf/Chen.Tam.Livingston.Pavone.WAFR18.pdf
-  - Contains files for reachability computation, numerical simulations, and implementation on Turtlebots.
+1. Turtlebot_Car4D_Car1D_Intersection: 
+   - Traffic light intersection example as described in WAFR 2018 submission: http://asl/wp-content/papercite-data/pdf/Chen.Tam.Livingston.Pavone.WAFR18.pdf
+   - Contains files for reachability computation, numerical simulations, and implementation on Turtlebots.
 
-- Turtlebot_Car4D_Car1D_Overtake:
-  - Highway overtaking example as described in WAFR 2018 submission: http://asl/wp-content/papercite-data/pdf/Chen.Tam.Livingston.Pavone.WAFR18.pdf
-  - Contains files for reachability computation, numerical simulations, and implementation on Turtlebots.
+2. Turtlebot_Car4D_Car1D_Overtake:
+   - Highway overtaking example as described in WAFR 2018 submission: http://asl/wp-content/papercite-data/pdf/Chen.Tam.Livingston.Pavone.WAFR18.pdf
+   - Contains files for reachability computation, numerical simulations, and implementation on Turtlebots.
 
-- STL Functions:
-  - Contains files for temporal operators (i.e. always, eventually, until)
+3. STL Functions:
+   - Contains files for temporal operators (i.e. always, eventually, until)
 
-- Test Sample:
-  - A quick computation to test whether the installation was successful.
+4. Test Sample:
+   - A quick computation to test whether the installation was successful.
 
-- Old Files:
-  - Contains work done leading up to the Traffic light intersection and Highway overtaking examples.
-  - Varied approach to the problems posed by the examples..
+5. Old Files:
+   - Contains work done leading up to the Traffic light intersection and Highway overtaking examples.
+   - Varied approach to the problems posed by the examples.
 
 
 
