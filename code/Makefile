@@ -12,21 +12,16 @@ SINGLE_PRECISION_ON = Y
 FILE_DUMP = 1
 CHUNK_SIZE = 0
 USE_CUDA = 0
-<<<<<<< HEAD:code/Old Files/SingleRoad_Square/Makefile
-NUM_OF_THREADS = 0
-NUM_OF_GPUS = 0
-=======
 NUM_OF_THREADS = 6
 NUM_OF_GPUS = 1
->>>>>>> origin/master:code/Makefile
 USE_LAST_DERIV_MIN_MAX = 0
 USE_USER_DEFINED_GPU_DYNSYS_FUNC = 1
 MODEL_SIZE = 0
 USE_TEMP_FILE = 0
-NVCC = /usr/local/cuda-9.1/bin/nvcc
+NVCC = /home/cuda-9.1/bin/nvcc
 ARCH = $(shell uname -m)
 PWD = $(shell pwd)
-INSTALL_DIR = $(HOME)/BEACLS/beacls/builds
+INSTALL_DIR = $(HOME)/Documents/beacls/builds
 MATIO_DIR = $(INSTALL_DIR)
 MATIO_LIB_DIR = $(MATIO_DIR)/$(ARCH)/lib
 MATIO_INC_DIR = $(MATIO_DIR)/include
@@ -69,7 +64,7 @@ ifeq ($(GPU_ON), Y)
 	NVCCFLAGS += -ccbin $(HOST_COMPILER)
 	NVCCFLAGS += -lineinfo
 	NVCCFLAGS += -DWITH_GPU
-	NVCCFLAGS += -L /usr/lib/x86_64-linux-gnu -L /usr/lib
+	NVCCFLAGS += -L /usr/lib/x86_64-linux-gnu -L /usr/lib/nvidia-361
 	NVCCFLAGS += -D_FORCE_INLINES
 else
 	CPP = $(HOSTCC)

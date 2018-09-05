@@ -15,6 +15,7 @@
 #include "until.cpp"
 #include "eventually.cpp"
 #include "always.cpp"
+#include "def_extraArgs.cpp"
 
 #include "Square_alpha_beta.cpp"
 #include "Road_alpha_beta.cpp"
@@ -24,10 +25,11 @@
 */
 int main(int argc, char *argv[])
 {
-	bool dump_file = false;
+	bool dump_file = true;
 	if (argc >= 2) {
 		dump_file = (atoi(argv[1]) == 0) ? false : true;
 	}
+<<<<<<< HEAD:code/Old Files/SingleRoad_Square/Create_SingleRoad_Square.cpp
 	bool useTempFile = false;
 	if (argc >= 3) {
 		useTempFile = (atoi(argv[2]) == 0) ? false : true;
@@ -72,6 +74,8 @@ int main(int argc, char *argv[])
 	if (argc >= 9) {
 		enable_user_defined_dynamics_on_gpu = (atoi(argv[8]) == 0) ? false : true;
 	}
+=======
+>>>>>>> origin/master:code/Car_test.cpp
 
 //!< Compute reachable set
 	const FLOAT_TYPE tMax = 5;
@@ -106,9 +110,15 @@ int main(int argc, char *argv[])
   helperOC::Plane4D* p4D = new helperOC::Plane4D(initState, wMax, arange, dMax);
 
 	if (accel) {
+<<<<<<< HEAD:code/Old Files/SingleRoad_Square/Create_SingleRoad_Square.cpp
   	g = helperOC::createGrid(gmin, gmax,
 				beacls::IntegerVec{31,31,21,21}, pdDim);
 	}
+=======
+  	g = helperOC::createGrid(gmin, gmax, 
+				beacls::IntegerVec{15,15,15,15}, pdDim);	
+	} 
+>>>>>>> origin/master:code/Car_test.cpp
 	else {
 		g = helperOC::createGrid(
 			beacls::FloatVec{gmin[0], gmin[1], gmin[2]},
@@ -135,14 +145,18 @@ int main(int argc, char *argv[])
 
     // Dynamical system parameters
 		helperOC::DynSysSchemeData* schemeData = new helperOC::DynSysSchemeData;
+<<<<<<< HEAD:code/Old Files/SingleRoad_Square/Create_SingleRoad_Square.cpp
 		helperOC::HJIPDE_extraArgs extraArgs;
 
     // Target set and visualization
 		extraArgs.visualize = true;
+=======
+    schemeData->set_grid(g);
+>>>>>>> origin/master:code/Car_test.cpp
 
-		schemeData->set_grid(g);
 		if (accel) {
 			schemeData->dynSys = p4D;
+<<<<<<< HEAD:code/Old Files/SingleRoad_Square/Create_SingleRoad_Square.cpp
 			extraArgs.plotData.plotDims = beacls::IntegerVec{ 1, 1, 0, 0};
 			extraArgs.plotData.projpt =
 			beacls::FloatVec{p4D->get_x()[2], p4D->get_x()[3]};
@@ -196,6 +210,57 @@ int main(int argc, char *argv[])
 		}
 
 	  	beacls::closeMatFStream(fs);
+=======
+		} 
+		else {
+			schemeData->dynSys = p3D;
+		}
+
+    helperOC::HJIPDE_extraArgs extraArgs = 
+      def_extraArgs(accel, schemeData->dynSys);
+
+		std::vector<beacls::FloatVec> alpha_U_beta;
+		int resultU = until(alpha_U_beta, alpha, beta, tau1, tau2, schemeData, tau, 
+			extraArgs);
+
+    std::vector<beacls::FloatVec> event_beta;
+		int resultF = eventually(event_beta, beta, tau1, tau2, schemeData, tau, 
+			extraArgs);
+
+    std::vector<beacls::FloatVec> always_alpha;
+		int resultG = always(always_alpha, alpha, tau1, tau2, schemeData, tau, 
+			extraArgs);				
+
+	  // save mat file
+
+
+		if (dump_file) {
+			std::string Car_test_filename("Car_test.mat");
+			beacls::MatFStream* fs = beacls::openMatFStream(Car_test_filename, 
+				beacls::MatOpenMode_Write);			
+			beacls::IntegerVec Ns = g->get_Ns();
+
+			g->save_grid(std::string("g"), fs);
+			if (!alpha_U_beta.empty()) {
+				save_vector_of_vectors(alpha_U_beta, std::string("alpha_U_beta"), Ns, 
+					false, fs);
+			}
+
+			if (!event_beta.empty()) {
+				save_vector_of_vectors(event_beta, std::string("event_beta"), Ns, 
+					false, fs);
+			}
+
+			if (!always_alpha.empty()) {
+				save_vector_of_vectors(always_alpha, std::string("always_alpha"), Ns, 
+					false, fs);
+			}
+
+			beacls::closeMatFStream(fs);
+		}
+
+	  
+>>>>>>> origin/master:code/Car_test.cpp
 
 		if (schemeData) delete schemeData;
 		if (p3D) delete p3D;
