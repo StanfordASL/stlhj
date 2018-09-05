@@ -1,4 +1,4 @@
-GPU_ON = Y
+GPU_ON = N
 VISUALIZE_ON = Y
 GUI_ON = Y
 FILESYSTEM_ON = N
@@ -18,10 +18,10 @@ USE_LAST_DERIV_MIN_MAX = 0
 USE_USER_DEFINED_GPU_DYNSYS_FUNC = 1
 MODEL_SIZE = 0
 USE_TEMP_FILE = 0
-NVCC = /usr/local/cuda-9.1/bin/nvcc
+NVCC = /home/cuda-9.1/bin/nvcc
 ARCH = $(shell uname -m)
 PWD = $(shell pwd)
-INSTALL_DIR = $(HOME)/BEACLS/beacls/builds
+INSTALL_DIR = $(HOME)/Documents/beacls/builds
 MATIO_DIR = $(INSTALL_DIR)
 MATIO_LIB_DIR = $(MATIO_DIR)/$(ARCH)/lib
 MATIO_INC_DIR = $(MATIO_DIR)/include
@@ -64,7 +64,7 @@ ifeq ($(GPU_ON), Y)
 	NVCCFLAGS += -ccbin $(HOST_COMPILER)
 	NVCCFLAGS += -lineinfo
 	NVCCFLAGS += -DWITH_GPU
-	NVCCFLAGS += -L /usr/lib/x86_64-linux-gnu -L /usr/lib
+	NVCCFLAGS += -L /usr/lib/x86_64-linux-gnu -L /usr/lib/nvidia-361
 	NVCCFLAGS += -D_FORCE_INLINES
 else
 	CPP = $(HOSTCC)
@@ -114,7 +114,7 @@ endif
 ifeq ($(PROFILE_ON), Y)
 ifeq ($(GPU_ON), N)
 	CFLAGS += -pg
-	LDFLAGS += -pg
+	LDFLAGS += -pg 
 endif
 endif
 ifeq ($(OPTIMIZE), 0)
@@ -175,7 +175,7 @@ endif
 vpath %.cpp .
 
 INCLUDE  = -I$(INSTALL_DIR)/includes
-TARGET   = Create_Fourway_Intersection_5D
+TARGET   = Car_test
 OBJDIR   = ./obj
 ifeq "$(strip $(OBJDIR))" ""
   OBJDIR = .
@@ -212,7 +212,7 @@ $(TARGET): $(OBJECTS) $(LIBS)
 all: $(TARGET)
 
 test: $(TARGET)
-	env $(TEST_ENV_NAME)=$(LLVM_LIBRARY_PATH):$(OPENCV_LIB_DIR):$(MODULE_DIR):$($(TEST_ENV_NAME)) ./$(TARGET) $(FILE_DUMP) $(USE_TEMP_FILE) $(USE_LAST_DERIV_MIN_MAX) $(USE_CUDA) $(NUM_OF_THREADS) $(NUM_OF_GPUS) $(CHUNK_SIZE) $(USE_USER_DEFINED_GPU_DYNSYS_FUNC)
+	env $(TEST_ENV_NAME)=$(LLVM_LIBRARY_PATH):$(OPENCV_LIB_DIR):$(MODULE_DIR):$($(TEST_ENV_NAME)) ./$(TARGET) $(FILE_DUMP)
 
 google-prof: $(GOOGLE-PROFILE-LOG)
 
