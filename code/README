@@ -1,41 +1,26 @@
-2018/05/17: alpha - vector that has the values corresponding to the "Green Light" situation.
-            beta - vector that only has positive values for the starting and target lane.
-
-%% Create_Fourway_Intersection.cpp %%
-- Main script that replaces Car_test.cpp in the original setup.
-- Calls fourway_intersection.cpp to assign values to grid points and passes a "Command"
-  to the script (0-Green Light, 1-Red Light)
-
-%% fourway_intersection.cpp %%
-- Contains the parameters that define the different parts of the intersection:
-  - theta_offset: the ideal angle at which the car should be traveling on the road section.
-  - lane_offset: the center of the road's longitudinal dimension
-  - range: {xmin,xmax,ymin,ymax} the vertices of the road section.
-  - enhance: a special case used for the target lane to multiply the values of the
-             lane vector by a factor.
-- Initializes the value-function vector to a low value (-12).
-- The last part of the script where
-
-%% get_subvector.cpp %%
-- Obtain the relevant subvector that relates to the road section that we are interested in.
-
-%% add_lane.cpp %%
-- Resets the values in the lane vector to 0 when the vector is first processed for
-  dimension 0 (x) or dimension 1 (y).
-- Takes in the enhance variable to know when to multiply the lane vector by a factor.
-- Returns the values assigned to the lane.
-
-%% add_sq.cpp %%
-- Resets the values in the lane vector to 0 when the vector is first processed for
-  dimension 0 (x).
-- Performs a function that outputs a lane vector that has the characteristics of running
-  add_lane.cpp for both dim=0 and 1 then taking the max values.
-
-%% theta_diff.cpp %%
-- finds the minimum d_theta between the 2 input angles.
-
-
-
-
-Installation
+%% Installation %%
+- The HJ Reachability computation uses the beacls C++ toolbox, which can be found here: https://github.com/HJReachability/beacls/tree/master/sources
 - In the Makefiles, make sure that the installation directories of the dependencies are correct (e.g. NVCC, INSTALL_DIR, MATIO_DIR)
+- Currently the STL formulations are not compatible with the CUDA option.
+
+%% Folders %%
+- Turtlebot_Car4D_Car1D_Intersection: 
+  - Traffic light intersection example as described in WAFR 2018 submission: http://asl/wp-content/papercite-data/pdf/Chen.Tam.Livingston.Pavone.WAFR18.pdf
+  - Contains files for reachability computation, numerical simulations, and implementation on Turtlebots.
+
+- Turtlebot_Car4D_Car1D_Overtake:
+  - Highway overtaking example as described in WAFR 2018 submission: http://asl/wp-content/papercite-data/pdf/Chen.Tam.Livingston.Pavone.WAFR18.pdf
+  - Contains files for reachability computation, numerical simulations, and implementation on Turtlebots.
+
+- STL Functions:
+  - Contains files for temporal operators (i.e. always, eventually, until)
+
+- Test Sample:
+  - A quick computation to test whether the installation was successful.
+
+- Old Files:
+  - Contains work done leading up to the Traffic light intersection and Highway overtaking examples.
+  - Varied approach to the problems posed by the examples..
+
+
+
