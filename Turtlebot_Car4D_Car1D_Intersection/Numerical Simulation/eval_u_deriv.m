@@ -5,8 +5,8 @@ vrange = [0,0.15]; %range of acceptable velocities
 w_mat = [-0.4,0.4]; %range of allowable turning rate
 a_mat = [-0.2,0.2]; %range of allowable acceleration
 v_mat = linspace(g.min(4),g.max(4),g.N(4));
-v_thresh_min = min(v_mat(v_mat>=vrange(1)));
-v_thresh_max = max(v_mat(v_mat<=vrange(2)));
+v_thresh_min = min(v_mat(v_mat>vrange(1)));
+v_thresh_max = max(v_mat(v_mat<vrange(2)));
 
 th_eps = 0;%0.02; %deviation of values from 0 that do not warrant a change in steering angle (u=0)
 V_eps = 0;
@@ -28,39 +28,21 @@ else
     Vq_V = interpn(xd,yd,thd,Vd,y2d,deriv_V,xq,yq,thq,Vq,y2q);
 end
 
-
-if Vq_th>=-th_eps && Vq_th<=th_eps
+if Vq_th==0
     u(1) = 0;
-elseif Vq_th<=0
-    if state(3)+min(w_mat)*t_step <= g.min(3) %|| value <= val_threshold
-        u(1) = 0;
-    else
+elseif Vq_th<0
         u(1) = min(w_mat);
-    end
-elseif Vq_th>=0
-    if state(3)+max(w_mat)*t_step >= g.max(3)  %|| value <= val_threshold
-        u(1) = 0;
-    else
+elseif Vq_th>0
         u(1) = max(w_mat);
-    end
 end
 
-if Vq_V>=-V_eps && Vq_V<=V_eps
+if Vq_V==0
     u(2) = 0;
-elseif Vq_V<=0
-    if state(4)+min(a_mat)*t_step <= g.min(4)
-        u(2) = 0;
-    else
+elseif Vq_V<0
         u(2) = min(a_mat);
-    end
 elseif Vq_V>=0
-    if state(4)+max(a_mat)*t_step >= g.max(4) %|| %value <= val_threshold
-        u(2) = 0;
-    else
         u(2) = max(a_mat);
-    end
 end
-
 
 % if value <= val_threshold
 %     u(1:2) = 0;

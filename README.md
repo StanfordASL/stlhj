@@ -14,7 +14,7 @@ http://asl/wp-content/papercite-data/pdf/Chen.Tam.Livingston.Pavone.WAFR18.pdf.
 
 3. Hardware Experiments (ROS Kinetic, Python, Matlab):
    - Turtlebot 3 burger is used as the hardware platform.
-   - ROS files derived from: https://github.com/StanfordASL/asl_turtlebot.
+   - ROS files derived from: https://github.com/StanfordASL/asl_turtlebot (as of 5 Sept 2018).
    - For switching controller, Matlab is required.
 
 4. MPC Controller (IPOPT, Casadi-Python, Yalmip-Matlab):

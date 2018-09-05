@@ -7,7 +7,7 @@ function dydt = odefun_dubinsCar(t,y,u)
 
 dydt = zeros(5,1);
 dydt(1) = y(4)*cos(y(3));
-dydt(2) = y(4)*sin(y(3));
+dydt(2) = y(4)*sin(y(3))-0.01;
 dydt(3) = u(1);
 dydt(4) = u(2);
 dydt(5) = u(3);

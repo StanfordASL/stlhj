@@ -1,7 +1,9 @@
 clear all
-load alpha.mat
-%close all
-[gmat,datamat] = cpp2matG(g,{data});
+%load overtake_output.mat
+load overtake_output.mat
+%%
+close all
+[gmat,datamat] = cpp2matG(g,{alpha_2});
 [gmat2] = processGrid(gmat);
 % %%
 % % 3D visualization of Target Set Values
@@ -10,28 +12,29 @@ load alpha.mat
 
 % 2D Projection 
 %close all
-th_mat = [0:2*pi/8:2*pi];
+th_mat = linspace(g.min(3),g.max(3),10);
 max_caxis = max(datamat(:));
 min_caxis = min(datamat(:));
-%th = 5*pi/4;
-V = 0.1;
-y2 = -0.6;
+%th = 5*pi/4
+V = 0.05;
+%y2 = -0.5;
+y2=-0.;
 figure;
-for i = 1:numel(th_mat)-1
-subplot(2,4,i);
+for i = 1:numel(th_mat)
+subplot(2,5,i);
 th = th_mat(i);
-[g2d,data2d] = proj(gmat2,datamat,[0,0,1,1,1],[th_mat(i),V,0.4]);
+[g2d,data2d] = proj(gmat2,datamat,[0,0,1,1,1],[th_mat(i),V,y2]);
 %[g2d,data2d] = proj(gmat2,datamat,[0,0,1,1,1],'max');
 %visSetIm(g2d,data2d,'r');
 % Contour plot (y vs.x)
 %subplot13,3,i)
 X = linspace(g2d.min(1),g2d.max(1),g2d.N(1));
 Y = linspace(g2d.min(2),g2d.max(2),g2d.N(2));
-[~,h]=contourf(X,Y,data2d',[-100:0.1:10]);
+[~,h]=contourf(X,Y,data2d',[-10:0.1:3.]);
 colorbar;
-caxismin = 0.3;
-caxismax = 2;
-%caxis([caxismin caxismax]);
+caxismin = -3;
+caxismax = 3;
+caxis([caxismin caxismax]);
 hold on;
 [~,h2] = contour(X,Y,data2d',[0 0],'ShowText','on');
 set(h2,'LineColor','k');
@@ -42,9 +45,12 @@ title(['x-y plane at \theta=' num2str(th*180/pi) '^o'])
 %title(['Max Projection on x-y Plane'])
 
 set(h,'LineColor','none');
-%axis([-0.6 0.6 -0.6 0.6])
+axis equal
+%axis([-0.4 0.4 -0.6 0.6])
 %set(gcf, 'Position', [100    44   936   790])
+
 set(gcf,'Position',[113 -66 1732 549])
+
 %ax = gca;
 %ax.FontSize = 20;
 end
