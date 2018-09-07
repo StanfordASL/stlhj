@@ -81,17 +81,12 @@ for i = 1:numel(t_real)
         value_function{i} = value;
         traj{i} = traj_temp; %initial state
     else
-        for j = 1:tstep/tstep_sim[~,value_always] = eval_u(traj_temp(end,:),gmatOut,always_alpha{end+2-i}(:,:,:,:,:),always_alpha{end+2-i}(:,:,:,:,:),tstep_sim,value_always);
+        for j = 1:tstep/tstep_sim
             %compute value function value at current position
             [~,value] = eval_u(traj_temp(end,:),gmatOut,alpha_U_beta{end+2-i}(:,:,:,:,:),alpha_U_beta{end+2-i}(:,:,:,:,:),tstep_sim,value);
-            [~,value_always] = eval_u(traj_temp(end,:),gmatOut,always_alpha{end+2-i}(:,:,:,:,:),always_alpha{end+2-i}(:,:,:,:,:),tstep_sim,value_always);
             
             %compute gradient of value function and control action
-            if value_always >= 0
-                [u(j,1:2),dVq_V,dVq_th] = eval_u_deriv(traj_temp(end,:),gmatOut,deriv,deriv_R,deriv_L,tstep_sim,value,i+1);
-            else
-                [u(j,1:2),dVq_V,dVq_th] = eval_u_deriv_halfplane(traj_temp(end,:),gmatOut,deriv,deriv_R,deriv_L,tstep_sim,value_always,i+1,intercept_Coefficient,slope_Coefficient);                
-            end
+            [u(j,1:2),dVq_V,dVq_th] = eval_u_deriv(traj_temp(end,:),gmatOut,deriv,deriv_R,deriv_L,tstep_sim,value,i+1);
             
             %compute trajectory
             [t_temp,traj_temp] = ode45(@(t_temp,traj_temp) odefun_dubinsCar(t_temp,traj_temp,u(j,:)),...

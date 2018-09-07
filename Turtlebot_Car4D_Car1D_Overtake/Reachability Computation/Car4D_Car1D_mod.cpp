@@ -219,7 +219,7 @@ void Car4D_Car1D_mod::ComputeCompatibleController(
 
     for (size_t w_iter = 0; w_iter < 2; ++w_iter) {
       Value = (-b-wrange[w_iter])/a;
-      if (Value>aRange[0] && Value<aRange[1]){
+      if (Value>=aRange[0] && Value=<aRange[1]){
         intersection_side.push_back(w_iter);
         intersection_point_w.push_back(wrange[w_iter]);
         intersection_point_a.push_back(Value);

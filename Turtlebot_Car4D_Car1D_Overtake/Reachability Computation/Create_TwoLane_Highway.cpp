@@ -131,11 +131,6 @@ int main(int argc, char *argv[])
 					ComputeHyperplaneCoefficients(slope_Coefficient,intercept_Coefficient,g,always_alpha,xs_vel,xs_th,v2range,dt); //u3 = -P4/P3*u4 - P5/P3*y2
 					printf("slope_Coefficient.size()=%lu\n",slope_Coefficient.size());
 					printf("intercept_Coefficient.size()=%lu\n",intercept_Coefficient.size());
-					// std::vector<const beacls::FloatVec*> Xq(11); //
-					//
-					// for (size_t dim = 0; dim < 5; ++dim) {
-					// 		xs[dim] = &g->get_xs(dim);
-					// 	}
 
 
 					tau1 = 0.;
@@ -143,18 +138,17 @@ int main(int argc, char *argv[])
 					tMax = 25.;
 					dt = 0.25;
 					beacls::FloatVec tau_3 = generateArithmeticSequence<FLOAT_TYPE>(0., dt, tMax);
-					//helperOC::Car4D_Car1D_mod* p4D1D_3 = new helperOC::Car4D_Car1D_mod(initState,always_alpha,slope_Coefficient,intercept_Coefficient, wMax, arange, dMax, v2range, y2range, dt);
-					helperOC::Car4D_Car1D* p4D1D_3 = new helperOC::Car4D_Car1D(initState, wMax, arange, dMax, v2range, y2range, dt);;
+					helperOC::Car4D_Car1D_mod* p4D1D_3 = new helperOC::Car4D_Car1D_mod(initState,always_alpha,slope_Coefficient,intercept_Coefficient, wMax, arange, dMax, v2range, y2range, dt);
+					//helperOC::Car4D_Car1D* p4D1D_3 = new helperOC::Car4D_Car1D(initState, wMax, arange, dMax, v2range, y2range, dt);;
 					helperOC::DynSysSchemeData* schemeData_3 = new helperOC::DynSysSchemeData;
 					schemeData_3->set_grid(g);
 					schemeData_3->dynSys = p4D1D_3;
 					helperOC::HJIPDE_extraArgs extraArgs_3 = def_extraArgs(accel, schemeData->dynSys);
 					int resultU = until(alpha_U_beta, alpha_2, beta_2, tau1, tau2, schemeData_3, tau_3, extraArgs_3);
-					printf("made it out alive!");
 
 					beacls::FloatVec tau_4 = generateArithmeticSequence<FLOAT_TYPE>(0., dt, tMax);
-					//helperOC::Car4D_Car1D_mod* p4D1D_3 = new helperOC::Car4D_Car1D_mod(initState,always_alpha,slope_Coefficient,intercept_Coefficient, wMax, arange, dMax, v2range, y2range, dt);
-					helperOC::Car4D_Car1D* p4D1D_4 = new helperOC::Car4D_Car1D(initState, wMax, arange, dMax, v2range, y2range, dt);;
+					helperOC::Car4D_Car1D_mod* p4D1D_3 = new helperOC::Car4D_Car1D_mod(initState,always_alpha,slope_Coefficient,intercept_Coefficient, wMax, arange, dMax, v2range, y2range, dt);
+					//helperOC::Car4D_Car1D* p4D1D_4 = new helperOC::Car4D_Car1D(initState, wMax, arange, dMax, v2range, y2range, dt);;
 					helperOC::DynSysSchemeData* schemeData_4 = new helperOC::DynSysSchemeData;
 					schemeData_4->set_grid(g);
 					schemeData_4->dynSys = p4D1D_4;
